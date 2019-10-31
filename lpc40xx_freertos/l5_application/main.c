@@ -6,14 +6,21 @@
 #include "board_io.h"
 #include "common_macros.h"
 #include "gpio.h"
+#include "led_matrix.h"
 #include "sj2_cli.h"
 
 static void blink_task(void *params);
 static void uart_task(void *params);
-
+RGBmatrixPanel led_matrix;
 static gpio_s led0, led1;
 
+void setup() {
+  RGBmatrixPanel_init(true, WIDTH);
+  led_matrix__begin();
+}
+
 int main(void) {
+  setup();
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
