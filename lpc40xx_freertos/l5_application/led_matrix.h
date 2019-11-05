@@ -32,6 +32,7 @@ Please read README.pdf for details
 
 #define WIDTH (64)
 #define HEIGHT (32)
+
 typedef struct Adafruit_GFX {
   int16_t _width;
   int16_t _height; // Display w/h as modified by current rotation
@@ -105,7 +106,7 @@ uint8_t getRotation(void);
 
 /******* RGBPannel ***********/
 
-//  // Constructor for 16x32 panel:
+//  Constructor for 16x32 panel:
 //  RGBmatrixPanel(uint8_t a, uint8_t b, uint8_t c,
 //    uint8_t sclk, uint8_t latch, uint8_t oe, bool dbuf, uint16_t width=32);
 
