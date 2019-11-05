@@ -11,8 +11,10 @@
 
 static void blink_task(void *params);
 static void uart_task(void *params);
-RGBmatrixPanel led_matrix;
+
 static gpio_s led0, led1;
+
+RGBmatrixPanel led_matrix;
 
 void setup_LED_Matrix() {
   RGBmatrixPanel_init(true, WIDTH);
@@ -21,19 +23,19 @@ void setup_LED_Matrix() {
 
 int main(void) {
 
-    setup_LED_Matrix();
-    drawPixel(0, 0, 0xFFFF);
+  setup_LED_Matrix();
+  drawPixel(0, 0, 0xFFFF);
 
-    led0 = board_io__get_led0();
-    led1 = board_io__get_led1();
+  led0 = board_io__get_led0();
+  led1 = board_io__get_led1();
 
-    xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
-                PRIORITY_LOW, NULL);
-    xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
-                PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
+              PRIORITY_LOW, NULL);
 
-    // It is advised to either run the uart_task, or the SJ2 command-line (CLI),
-    // but not both Change '#if 0' to '#if 1' and vice versa to try it out
+  // It is advised to either run the uart_task, or the SJ2 command-line (CLI),
+  // but not both Change '#if 0' to '#if 1' and vice versa to try it out
 #if 0
   // printf() takes more stack space, size this tasks' stack higher
   xTaskCreate(uart_task, "uart", (512U * 8) / sizeof(void *), NULL, PRIORITY_LOW, NULL);
