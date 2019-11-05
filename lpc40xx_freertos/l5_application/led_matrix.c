@@ -124,98 +124,90 @@ void led_matrix__begin(void) {
 }
 
 // Init/alloc code common to both constructors:
+void drawPixel(int16_t x, int16_t y, uint16_t c) {
+  uint8_t r, g, b, bit, limit, *ptr;
 
-/*
-void drawPixel(int16_t x, int16_t y, uint16_t c)
-{
-    uint8_t r, g, b, bit, limit, *ptr;
+  if ((x < 0) || (x >= width()) || (y < 0) || (y >= height()))
+    return;
 
-    if ((x < 0) || (x >= width()) || (y < 0) || (y >= height()))
-        return;
+  switch (ada_gfx.rotation) {
+  case 1:
+    swap(x, y);
+    x = WIDTH - 1 - x;
+    break;
+  case 2:
+    x = WIDTH - 1 - x;
+    y = HEIGHT - 1 - y;
+    break;
+  case 3:
+    swap(x, y);
+    y = HEIGHT - 1 - y;
+    break;
+  }
 
-    switch (gfx.rotation)
-    {
-    case 1:
-        swap(x, y);
-        x = WIDTH - 1 - x;
-        break;
-    case 2:
-        x = WIDTH - 1 - x;
-        y = HEIGHT - 1 - y;
-        break;
-    case 3:
-        swap(x, y);
-        y = HEIGHT - 1 - y;
-        break;
-    }
+  // Adafruit_GFX uses 16-bit color in 5/6/5 format, while matrix needs
+  // 4/4/4.  Pluck out relevant bits while separating into R,G,B:
+  r = c >> 12;        // RRRRrggggggbbbbb
+  g = (c >> 7) & 0xF; // rrrrrGGGGggbbbbb
+  b = (c >> 1) & 0xF; // rrrrrggggggBBBBb
 
-    // Adafruit_GFX uses 16-bit color in 5/6/5 format, while matrix needs
-    // 4/4/4.  Pluck out relevant bits while separating into R,G,B:
-    r = c >> 12;        // RRRRrggggggbbbbb
-    g = (c >> 7) & 0xF; // rrrrrGGGGggbbbbb
-    b = (c >> 1) & 0xF; // rrrrrggggggBBBBb
+  // Loop counter stuff
+  bit = 2;
+  limit = 1 << nPlanes;
 
-    // Loop counter stuff
-    bit = 2;
-    limit = 1 << nPlanes;
-
-    if (y < nRows)
-    {
-        // Data for the upper half of the display is stored in the lower
-        // bits of each byte.
-        ptr = &matrixbuff[backindex][y * WIDTH * (nPlanes - 1) + x]; // Base
-addr
-        // Plane 0 is a tricky case -- its data is spread about,
-        // stored in least two bits not used by the other planes.
-        ptr[WIDTH * 2] &= ~0B00000011; // Plane 0 R,G mask out in one op
-        if (r & 1)
-            ptr[WIDTH * 2] |= 0B00000001; // Plane 0 R: 64 bytes ahead, bit 0
-        if (g & 1)
-            ptr[WIDTH * 2] |= 0B00000010; // Plane 0 G: 64 bytes ahead, bit 1
-        if (b & 1)
-            ptr[WIDTH] |= 0B00000001; // Plane 0 B: 32 bytes ahead, bit 0
-        else
-            ptr[WIDTH] &= ~0B00000001; // Plane 0 B unset; mask out
-        // The remaining three image planes are more normal-ish.
-        // Data is stored in the high 6 bits so it can be quickly
-        // copied to the DATAPORT register w/6 output lines.
-        for (; bit < limit; bit <<= 1)
-        {
-            *ptr &= ~0B00011100; // Mask out R,G,B in one op
-            if (r & bit)
-                *ptr |= 0B00000100; // Plane N R: bit 2
-            if (g & bit)
-                *ptr |= 0B00001000; // Plane N G: bit 3
-            if (b & bit)
-                *ptr |= 0B00010000; // Plane N B: bit 4
-            ptr += WIDTH;           // Advance to next bit plane
-        }
-    }
+  if (y < led_matrix.nRows) {
+    // Data for the upper half of the display is stored in the lower
+    // bits of each byte.
+    ptr = &led_matrix.matrixbuff[led_matrix.backindex]
+                                [y * WIDTH * (nPlanes - 1) + x]; // Baseaddr
+    // Plane 0 is a tricky case -- its data is spread about,
+    // stored in least two bits not used by the other planes.
+    ptr[WIDTH * 2] &= ~0B00000011; // Plane 0 R,G mask out in one op
+    if (r & 1)
+      ptr[WIDTH * 2] |= 0B00000001; // Plane 0 R: 64 bytes ahead, bit 0
+    if (g & 1)
+      ptr[WIDTH * 2] |= 0B00000010; // Plane 0 G: 64 bytes ahead, bit 1
+    if (b & 1)
+      ptr[WIDTH] |= 0B00000001; // Plane 0 B: 32 bytes ahead, bit 0
     else
-    {
-        // Data for the lower half of the display is stored in the upper
-        // bits, except for the plane 0 stuff, using 2 least bits.
-        ptr = &matrixbuff[backindex][(y - nRows) * WIDTH * (nPlanes - 1) + x];
-        *ptr &= ~0B00000011; // Plane 0 G,B mask out in one op
-        if (r & 1)
-            ptr[WIDTH] |= 0B00000010; // Plane 0 R: 32 bytes ahead, bit 1
-        else
-            ptr[WIDTH] &= ~0B00000010; // Plane 0 R unset; mask out
-        if (g & 1)
-            *ptr |= 0B00000001; // Plane 0 G: bit 0
-        if (b & 1)
-            *ptr |= 0B00000010; // Plane 0 B: bit 0
-        for (; bit < limit; bit <<= 1)
-        {
-            *ptr &= ~0B11100000; // Mask out R,G,B in one op
-            if (r & bit)
-                *ptr |= 0B00100000; // Plane N R: bit 5
-            if (g & bit)
-                *ptr |= 0B01000000; // Plane N G: bit 6
-            if (b & bit)
-                *ptr |= 0B10000000; // Plane N B: bit 7
-            ptr += WIDTH;           // Advance to next bit plane
-        }
+      ptr[WIDTH] &= ~0B00000001; // Plane 0 B unset; mask out
+    // The remaining three image planes are more normal-ish.
+    // Data is stored in the high 6 bits so it can be quickly
+    // copied to the DATAPORT register w/6 output lines.
+    for (; bit < limit; bit <<= 1) {
+      *ptr &= ~0B00011100; // Mask out R,G,B in one op
+      if (r & bit)
+        *ptr |= 0B00000100; // Plane N R: bit 2
+      if (g & bit)
+        *ptr |= 0B00001000; // Plane N G: bit 3
+      if (b & bit)
+        *ptr |= 0B00010000; // Plane N B: bit 4
+      ptr += WIDTH;         // Advance to next bit plane
     }
+  } else {
+    // Data for the lower half of the display is stored in the upper
+    // bits, except for the plane 0 stuff, using 2 least bits.
+    ptr = &led_matrix
+               .matrixbuff[led_matrix.backindex]
+                          [(y - led_matrix.nRows) * WIDTH * (nPlanes - 1) + x];
+    *ptr &= ~0B00000011; // Plane 0 G,B mask out in one op
+    if (r & 1)
+      ptr[WIDTH] |= 0B00000010; // Plane 0 R: 32 bytes ahead, bit 1
+    else
+      ptr[WIDTH] &= ~0B00000010; // Plane 0 R unset; mask out
+    if (g & 1)
+      *ptr |= 0B00000001; // Plane 0 G: bit 0
+    if (b & 1)
+      *ptr |= 0B00000010; // Plane 0 B: bit 0
+    for (; bit < limit; bit <<= 1) {
+      *ptr &= ~0B11100000; // Mask out R,G,B in one op
+      if (r & bit)
+        *ptr |= 0B00100000; // Plane N R: bit 5
+      if (g & bit)
+        *ptr |= 0B01000000; // Plane N G: bit 6
+      if (b & bit)
+        *ptr |= 0B10000000; // Plane N B: bit 7
+      ptr += WIDTH;         // Advance to next bit plane
+    }
+  }
 }
-*/

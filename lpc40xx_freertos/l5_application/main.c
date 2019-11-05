@@ -21,6 +21,7 @@ void setup() {
 
 int main(void) {
   setup();
+  drawPixel(0,0, 0xFFFF);
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
