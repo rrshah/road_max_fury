@@ -1,3 +1,11 @@
+/*
+
+scons
+python nxp-programmer/flash.py --port COM6 --input
+_build_lpc40xx_freertos\lpc40xx_freertos.bin
+
+*/
+
 #include <stdio.h>
 
 #include "FreeRTOS.h"

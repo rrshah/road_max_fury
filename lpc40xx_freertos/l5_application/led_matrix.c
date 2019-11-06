@@ -142,6 +142,7 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
   if ((x < 0) || (x >= width()) || (y < 0) || (y >= height()))
     return;
 
+  // rotation=0 for our use case
   switch (ada_gfx.rotation) {
   case 1:
     swap(x, y);
@@ -222,6 +223,7 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
       ptr += WIDTH;         // Advance to next bit plane
     }
   }
+  updateDisplay();
 }
 
 void updateDisplay(void) {
@@ -260,11 +262,11 @@ void updateDisplay(void) {
     // Plane 0 was loaded on prior interrupt invocation and is about to
     // latch now, so update the row address lines before we do that:
 
-    (led_matrix.row & 0x1) ? P_addrA.setHigh() : P_addrA.setLow();
-    (led_matrix.row & 0x2) ? P_addrB.setHigh() : P_addrB.setLow();
-    (led_matrix.row & 0x4) ? P_addrC.setHigh() : P_addrC.setLow();
+    (led_matrix.row & 0x1) ? gpio__set(P_addrA) : gpio__reset(P_addrA);
+    (led_matrix.row & 0x2) ? gpio__set(P_addrB) : gpio__reset(P_addrB);
+    (led_matrix.row & 0x4) ? gpio__set(P_addrC) : gpio__reset(P_addrC);
     if (led_matrix.nRows > 8) {
-      (led_matrix.row & 0x8) ? P_addrD.setHigh() : P_addrD.setLow();
+      (led_matrix.row & 0x8) ? gpio__set(P_addrD) : gpio__reset(P_addrD);
     }
   }
 
@@ -275,22 +277,22 @@ void updateDisplay(void) {
   // RESET timer duration
   // refreshTimer.resetPeriod_SIT(duration, uSec);
 
-  P_OE.setLow();    // Re-enable output
-  P_LATCH.setLow(); // Latch down
+  gpio__reset(P_OE);    // Re-enable output
+  gpio__reset(P_LATCH); // Latch down
 
   if (led_matrix.plane > 0) {
 
     // Planes 1-3 must be unpacked and bit-banged
     for (i = 0; i < WIDTH; i++) {
 
-      (ptr[i] & 0x04) ? P_R1.setHigh() : P_R1.setLow(); // R1
-      (ptr[i] & 0x08) ? P_G1.setHigh() : P_G1.setLow(); // G1
-      (ptr[i] & 0x10) ? P_B1.setHigh() : P_B1.setLow(); // B1
-      (ptr[i] & 0x20) ? P_R2.setHigh() : P_R2.setLow(); // R2
-      (ptr[i] & 0x40) ? P_G2.setHigh() : P_G2.setLow(); // G2
-      (ptr[i] & 0x80) ? P_B2.setHigh() : P_B2.setLow(); // B2
-      P_CLOCK.setHigh();                                // hi
-      P_CLOCK.setLow();                                 // lo
+      (ptr[i] & 0x04) ? gpio__set(P_R1) : gpio__reset(P_R1); // R1
+      (ptr[i] & 0x08) ? gpio__set(P_G1) : gpio__reset(P_G1); // G1
+      (ptr[i] & 0x10) ? gpio__set(P_B1) : gpio__reset(P_B1); // B1
+      (ptr[i] & 0x20) ? gpio__set(P_R2) : gpio__reset(P_R2); // R2
+      (ptr[i] & 0x40) ? gpio__set(P_G2) : gpio__reset(P_G2); // G2
+      (ptr[i] & 0x80) ? gpio__set(P_B2) : gpio__reset(P_B2); // B2
+      gpio__set(P_CLOCK);                                    // hi
+      gpio__reset(P_CLOCK);                                  // lo
     }
 
     led_matrix.buffptr += WIDTH;
@@ -305,14 +307,14 @@ void updateDisplay(void) {
       uint8_t bits = (ptr[i] << 6) | ((ptr[i + WIDTH] << 4) & 0x30) |
                      ((ptr[i + WIDTH * 2] << 2) & 0x0C);
 
-      (bits & 0x04) ? gpio__set(P_R1) : P_R1.setLow(); // R1
-      (bits & 0x08) ? gpio__set(P_G1) : P_G1.setLow(); // G1
-      (bits & 0x10) ? gpio__set(P_B1) : P_B1.setLow(); // B1
-      (bits & 0x20) ? gpio__set(P_R2) : P_R2.setLow(); // R2
-      (bits & 0x40) ? gpio__set(P_G2) : P_G2.setLow(); // G2
-      (bits & 0x80) ? gpio__set(P_B2) : P_B2.setLow(); // B2
-      gpio__set(P_CLOCK);                              // hi
-      P_CLOCK.setLow();                                // lo
+      (bits & 0x04) ? gpio__set(P_R1) : gpio__reset(P_R1); // R1
+      (bits & 0x08) ? gpio__set(P_G1) : gpio__reset(P_G1); // G1
+      (bits & 0x10) ? gpio__set(P_B1) : gpio__reset(P_B1); // B1
+      (bits & 0x20) ? gpio__set(P_R2) : gpio__reset(P_R2); // R2
+      (bits & 0x40) ? gpio__set(P_G2) : gpio__reset(P_G2); // G2
+      (bits & 0x80) ? gpio__set(P_B2) : gpio__reset(P_B2); // B2
+      gpio__set(P_CLOCK);                                  // hi
+      gpio__reset(P_CLOCK);                                // lo
     }
   }
 }
