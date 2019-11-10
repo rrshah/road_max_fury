@@ -864,15 +864,41 @@ Discarded input sections
  .text          0x00000000        0x0 _build_lpc40xx_freertos\obj\led_matrix.o
  .data          0x00000000        0x0 _build_lpc40xx_freertos\obj\led_matrix.o
  .bss           0x00000000        0x0 _build_lpc40xx_freertos\obj\led_matrix.o
- .debug_info    0x00000000      0x906 _build_lpc40xx_freertos\obj\led_matrix.o
- .debug_abbrev  0x00000000      0x19e _build_lpc40xx_freertos\obj\led_matrix.o
+ .text.led_matrix__updateDisplay
+                0x00000000      0x180 _build_lpc40xx_freertos\obj\led_matrix.o
+ .text.led_matrix__init
+                0x00000000      0x220 _build_lpc40xx_freertos\obj\led_matrix.o
+ .text.drawPixel
+                0x00000000       0x34 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_B1      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_B2      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_CLOCK   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_G1      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_G2      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_LATCH   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_OE      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_R1      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_R2      0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_addrA   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_addrB   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_addrC   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.P_addrD   0x00000000        0x2 _build_lpc40xx_freertos\obj\led_matrix.o
+ .bss.led_matrix_buffer
+                0x00000000      0x400 _build_lpc40xx_freertos\obj\led_matrix.o
+ .data.row_to_display
+                0x00000000        0x1 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_info    0x00000000      0xe60 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_abbrev  0x00000000      0x2b5 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_loc     0x00000000       0x81 _build_lpc40xx_freertos\obj\led_matrix.o
  .debug_aranges
-                0x00000000       0x18 _build_lpc40xx_freertos\obj\led_matrix.o
- .debug_line    0x00000000      0x112 _build_lpc40xx_freertos\obj\led_matrix.o
- .debug_str     0x00000000      0x571 _build_lpc40xx_freertos\obj\led_matrix.o
+                0x00000000       0x30 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_ranges  0x00000000       0x88 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_line    0x00000000      0x438 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_str     0x00000000      0x754 _build_lpc40xx_freertos\obj\led_matrix.o
  .comment       0x00000000       0x77 _build_lpc40xx_freertos\obj\led_matrix.o
+ .debug_frame   0x00000000       0x84 _build_lpc40xx_freertos\obj\led_matrix.o
  .ARM.attributes
-                0x00000000       0x39 _build_lpc40xx_freertos\obj\led_matrix.o
+                0x00000000       0x34 _build_lpc40xx_freertos\obj\led_matrix.o
  .text          0x00000000        0x0 _build_lpc40xx_freertos\obj\main.o
  .data          0x00000000        0x0 _build_lpc40xx_freertos\obj\main.o
  .bss           0x00000000        0x0 _build_lpc40xx_freertos\obj\main.o
@@ -3109,7 +3135,7 @@ OUTPUT(_build_lpc40xx_freertos\lpc40xx_freertos.elf elf32-littlearm)
  .debug_ranges  0x00001b28       0x18 _build_lpc40xx_freertos\obj\main.o
  .debug_ranges  0x00001b40       0x60 _build_lpc40xx_freertos\obj\rtos_hooks.o
 
-.debug_line     0x00000000    0x10d7c
+.debug_line     0x00000000    0x10d83
  .debug_line    0x00000000      0x2df _build_lpc40xx_freertos\obj\entry_point.o
  .debug_line    0x000002df      0x402 _build_lpc40xx_freertos\obj\interrupt_vector_table.o
  .debug_line    0x000006e1      0x225 _build_lpc40xx_freertos\obj\clock.o
@@ -3146,8 +3172,8 @@ OUTPUT(_build_lpc40xx_freertos\lpc40xx_freertos.elf elf32-littlearm)
  .debug_line    0x0000fd76      0x274 _build_lpc40xx_freertos\obj\ssp2_mutex.o
  .debug_line    0x0000ffea      0x24a _build_lpc40xx_freertos\obj\sys_time.o
  .debug_line    0x00010234      0x445 _build_lpc40xx_freertos\obj\uart_printf.o
- .debug_line    0x00010679      0x368 _build_lpc40xx_freertos\obj\main.o
- .debug_line    0x000109e1      0x39b _build_lpc40xx_freertos\obj\rtos_hooks.o
+ .debug_line    0x00010679      0x36f _build_lpc40xx_freertos\obj\main.o
+ .debug_line    0x000109e8      0x39b _build_lpc40xx_freertos\obj\rtos_hooks.o
 
 .debug_str      0x00000000     0x646a
  .debug_str     0x00000000      0x610 _build_lpc40xx_freertos\obj\entry_point.o

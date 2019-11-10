@@ -27,14 +27,14 @@ Idx Name             Size      VMA       LMA       File off  Algn  Flags
   6 .debug_abbrev    0000628e  00000000  00000000  0004351f  2**0  CONTENTS, READONLY, DEBUGGING
   7 .debug_aranges   00000e98  00000000  00000000  000497ad  2**0  CONTENTS, READONLY, DEBUGGING
   8 .debug_ranges    00001ba0  00000000  00000000  0004a645  2**0  CONTENTS, READONLY, DEBUGGING
-  9 .debug_line      00010d7c  00000000  00000000  0004c1e5  2**0  CONTENTS, READONLY, DEBUGGING
- 10 .debug_str       0000646a  00000000  00000000  0005cf61  2**0  CONTENTS, READONLY, DEBUGGING
- 11 .comment         00000076  00000000  00000000  000633cb  2**0  CONTENTS, READONLY
- 12 .ARM.attributes  00000032  00000000  00000000  00063441  2**0  CONTENTS, READONLY
- 13 .debug_frame     0000435c  00000000  00000000  00063474  2**2  CONTENTS, READONLY, DEBUGGING
- 14 .debug_loc       00011b0b  00000000  00000000  000677d0  2**0  CONTENTS, READONLY, DEBUGGING
- 15 .stab            00000054  00000000  00000000  000792dc  2**2  CONTENTS, READONLY, DEBUGGING
- 16 .stabstr         000000ab  00000000  00000000  00079330  2**0  CONTENTS, READONLY, DEBUGGING
+  9 .debug_line      00010d83  00000000  00000000  0004c1e5  2**0  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str       0000646a  00000000  00000000  0005cf68  2**0  CONTENTS, READONLY, DEBUGGING
+ 11 .comment         00000076  00000000  00000000  000633d2  2**0  CONTENTS, READONLY
+ 12 .ARM.attributes  00000032  00000000  00000000  00063448  2**0  CONTENTS, READONLY
+ 13 .debug_frame     0000435c  00000000  00000000  0006347c  2**2  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_loc       00011b0b  00000000  00000000  000677d8  2**0  CONTENTS, READONLY, DEBUGGING
+ 15 .stab            00000054  00000000  00000000  000792e4  2**2  CONTENTS, READONLY, DEBUGGING
+ 16 .stabstr         000000ab  00000000  00000000  00079338  2**0  CONTENTS, READONLY, DEBUGGING
 SYMBOL TABLE:
 00000000 l    d  .text	00000000 .text
 0000b82c l    d  .ARM.exidx	00000000 .ARM.exidx
@@ -14776,19 +14776,19 @@ C:\road_max_fury/lpc40xx_freertos\l4_io\sources/uart_printf.c:57 (discriminator 
 
 0000409c <blink_task>:
 blink_task():
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:52
-                         // runs out of memory and fails
-
-  return 0;
-}
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:70
+//         gpio__toggle(led);
+//         vTaskDelay(500);
+//     }
+// }
 
 static void blink_task(void *params) {
     409c:	b507      	push	{r0, r1, r2, lr}
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:53
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:71
   const gpio_s led = *((gpio_s *)params);
     409e:	8803      	ldrh	r3, [r0, #0]
     40a0:	f8ad 3004 	strh.w	r3, [sp, #4]
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:58 (discriminator 1)
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:76 (discriminator 1)
 
   // Warning: This task starts with very minimal stack, so do not use printf()
   // API here to avoid stack overflow
@@ -14796,7 +14796,7 @@ C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:58 (discriminator 1)
     gpio__toggle(led);
     40a4:	9801      	ldr	r0, [sp, #4]
     40a6:	f7fe fa23 	bl	24f0 <gpio__toggle>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:59 (discriminator 1)
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:77 (discriminator 1)
     vTaskDelay(500);
     40aa:	f44f 70fa 	mov.w	r0, #500	; 0x1f4
     40ae:	f7fd fb75 	bl	179c <vTaskDelay>
@@ -14814,7 +14814,7 @@ C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:27
 C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:28
   led1 = board_io__get_led1();
     40be:	4d17      	ldr	r5, [pc, #92]	; (411c <main+0x68>)
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:30
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:34
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
     40c0:	4f17      	ldr	r7, [pc, #92]	; (4120 <main+0x6c>)
 C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:27
@@ -14827,20 +14827,20 @@ C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:28
   led1 = board_io__get_led1();
     40cc:	f7fe f92e 	bl	232c <board_io__get_led1>
     40d0:	b200      	sxth	r0, r0
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:30
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:34
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
     40d2:	2400      	movs	r4, #0
 C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:28
   led1 = board_io__get_led1();
     40d4:	7028      	strb	r0, [r5, #0]
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:30
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:34
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
     40d6:	f04f 0801 	mov.w	r8, #1
 C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:28
   led1 = board_io__get_led1();
     40da:	f3c0 2007 	ubfx	r0, r0, #8, #8
     40de:	7068      	strb	r0, [r5, #1]
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:30
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:34
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
     40e0:	4633      	mov	r3, r6
     40e2:	e9cd 8400 	strd	r8, r4, [sp]
@@ -14848,7 +14848,7 @@ C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:30
     40e8:	490e      	ldr	r1, [pc, #56]	; (4124 <main+0x70>)
     40ea:	4638      	mov	r0, r7
     40ec:	f7fd f9a8 	bl	1440 <xTaskCreate>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:32
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:36
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
     40f0:	462b      	mov	r3, r5
     40f2:	2264      	movs	r2, #100	; 0x64
@@ -14856,17 +14856,17 @@ C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:32
     40f6:	e9cd 8400 	strd	r8, r4, [sp]
     40fa:	4638      	mov	r0, r7
     40fc:	f7fd f9a0 	bl	1440 <xTaskCreate>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:41
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:45
   sj2_cli__init();
     4100:	f7fe ffc2 	bl	3088 <sj2_cli__init>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:45
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:49
   puts("Starting RTOS");
     4104:	4809      	ldr	r0, [pc, #36]	; (412c <main+0x78>)
     4106:	f001 ff73 	bl	5ff0 <puts>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:46
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:50
   vTaskStartScheduler(); // This function never returns unless RTOS scheduler
     410a:	f7fd f9fd 	bl	1508 <vTaskStartScheduler>
-C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:50
+C:\road_max_fury/lpc40xx_freertos\l5_application/main.c:54
 }
     410e:	4620      	mov	r0, r4
     4110:	b002      	add	sp, #8
