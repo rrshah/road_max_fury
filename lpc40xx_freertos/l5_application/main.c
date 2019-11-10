@@ -18,7 +18,7 @@ _build_lpc40xx_freertos\lpc40xx_freertos.bin
 
 static void blink_task(void *params);
 static void uart_task(void *params);
-// static void led_matrix_task(void *params);
+static void led_matrix_task(void *params);
 
 static gpio_s led0, led1;
 
@@ -27,13 +27,11 @@ int main(void) {
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
-  //   void led_matrix__init(void);
-  //   void drawPixel(int16_t x, int16_t y, uint16_t c);
-  //   void led_matrix__updateDisplay(void);
-
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
               PRIORITY_LOW, NULL);
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL,
               PRIORITY_LOW, NULL);
 
   // It is advised to either run the uart_task, or the SJ2 command-line (CLI),
@@ -53,19 +51,15 @@ int main(void) {
   return 0;
 }
 
-// static void led_matrix_task(void *params)
-// {
-//     const gpio_s led = *((gpio_s *)params);
+static void led_matrix_task(void *params) {
+  led_matrix__init();
+  drawPixel(0, 0, 1);
 
-//     // Warning: This task starts with very minimal stack, so do not use
-//     printf()
-//     // API here to avoid stack overflow
-//     while (true)
-//     {
-//         gpio__toggle(led);
-//         vTaskDelay(500);
-//     }
-// }
+  while (true) {
+    led_matrix__updateDisplay();
+    vTaskDelay(1);
+  }
+}
 
 static void blink_task(void *params) {
   const gpio_s led = *((gpio_s *)params);
