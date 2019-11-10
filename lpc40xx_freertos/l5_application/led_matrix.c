@@ -1,5 +1,6 @@
 #include "led_matrix.h"
-
+#include "delay.h"
+#include <stdio.h>
 #define nPlanes 4
 
 // LED Matrix parameters
@@ -23,6 +24,13 @@ static gpio_s P_R2;    // R2
 static gpio_s P_G2;    // G2
 static gpio_s P_B2;    // B2
 
+/*
+In updateDisplay() func :
+Get the time to next interrupt
+duration = dur[numPanels][led_matrix.plane];
+ //For 32x64 matrix --> 2nd row of matrix is used (See below numPanels
+defintion). ie... 60, 120, 240, 480
+*/
 static uint16_t dur[4][4] = {{50, 100, 200, 400}, // 1 panel
                              {60, 120, 240, 480},
                              {70, 140, 280, 560},
@@ -67,9 +75,9 @@ static void init(uint8_t rows, bool dbuf, uint16_t width) {
       rows; // Number of multiplexed rows; actual height is 2X this
 
   // Allocate and initialize matrix buffer:
-  uint32_t buffsize = width * led_matrix.nRows *
-                      3, // x3 = 3 bytes holds 4 planes "packed"
-      allocsize = (dbuf == true) ? (buffsize * 2) : buffsize;
+  uint32_t buffsize =
+      width * led_matrix.nRows * 3; // x3 = 3 bytes holds 4 planes "packed"
+  uint32_t allocsize = (dbuf == true) ? (buffsize * 2) : buffsize;
   if (NULL == (led_matrix.matrixbuff[0] = (uint8_t *)malloc(allocsize)))
     return;
   memset(led_matrix.matrixbuff[0], 0, allocsize);
@@ -79,6 +87,8 @@ static void init(uint8_t rows, bool dbuf, uint16_t width) {
                                  : led_matrix.matrixbuff[0];
 
   // Adjust timing for number of panels (and therefore pixels) wide
+  // For 32x64 matrix -->
+  // numPanels = (64 - 1)/32 = 1.98 ~ 1 (rounded)
   numPanels = (width - 1) / 32;
 
   // Save pin numbers for use by begin() method later.
@@ -143,20 +153,20 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
     return;
 
   // rotation=0 for our use case
-  switch (ada_gfx.rotation) {
-  case 1:
-    swap(x, y);
-    x = WIDTH - 1 - x;
-    break;
-  case 2:
-    x = WIDTH - 1 - x;
-    y = HEIGHT - 1 - y;
-    break;
-  case 3:
-    swap(x, y);
-    y = HEIGHT - 1 - y;
-    break;
-  }
+  //   switch (ada_gfx.rotation) {
+  //   case 1:
+  //     swap(x, y);
+  //     x = WIDTH - 1 - x;
+  //     break;
+  //   case 2:
+  //     x = WIDTH - 1 - x;
+  //     y = HEIGHT - 1 - y;
+  //     break;
+  //   case 3:
+  //     swap(x, y);
+  //     y = HEIGHT - 1 - y;
+  //     break;
+  //   }
 
   // Adafruit_GFX uses 16-bit color in 5/6/5 format, while matrix needs
   // 4/4/4.  Pluck out relevant bits while separating into R,G,B:
@@ -168,11 +178,14 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
   bit = 2;
   limit = 1 << nPlanes;
 
+  printf("x=%d, y=%d, index=%d\n", x, y, y * WIDTH * (nPlanes - 1) + x);
+
   if (y < led_matrix.nRows) {
     // Data for the upper half of the display is stored in the lower
     // bits of each byte.
     ptr = &led_matrix.matrixbuff[led_matrix.backindex]
                                 [y * WIDTH * (nPlanes - 1) + x]; // Baseaddr
+
     // Plane 0 is a tricky case -- its data is spread about,
     // stored in least two bits not used by the other planes.
     ptr[WIDTH * 2] &= ~0B00000011; // Plane 0 R,G mask out in one op
@@ -223,37 +236,142 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
       ptr += WIDTH;         // Advance to next bit plane
     }
   }
+  uint8_t *base =
+      led_matrix
+          .matrixbuff[led_matrix.backindex][y * WIDTH * (nPlanes - 1) + x];
+  printf("Pixel (%d, %d) = %x, %x, %x\n", x, y, *base, base[WIDTH],
+         base[2 * WIDTH]);
+  updateDisplay();
+  delay__ms(1);
+  updateDisplay();
+  delay__ms(1);
+  updateDisplay();
+  delay__ms(1);
   updateDisplay();
 }
 
+// Original RGBmatrixPanel library used 3/3/3 color.  Later version used
+// 4/4/4.  Then Adafruit_GFX (core library used across all Adafruit
+// display devices now) standardized on 5/6/5.  The matrix still operates
+// internally on 4/4/4 color, but all the graphics functions are written
+// to expect 5/6/5...the matrix lib will truncate the color components as
+// needed when drawing.  These next functions are mostly here for the
+// benefit of older code using one of the original color formats.
+
+// Promote 3/3/3 RGB to Adafruit_GFX 5/6/5
+uint16_t Color333(uint8_t r, uint8_t g, uint8_t b) {
+  // RRRrrGGGgggBBBbb
+  return ((r & 0x7) << 13) | ((r & 0x6) << 10) | ((g & 0x7) << 8) |
+         ((g & 0x7) << 5) | ((b & 0x7) << 2) | ((b & 0x6) >> 1);
+}
+
+// void updateDisplay(void) {
+//   uint8_t i, *ptr;
+//   uint16_t duration;
+
+//   gpio__set(P_OE);      // Disable LED output during row/plane switchover
+//   gpio__set(P_LATCH);   // Latch data loaded during *prior* interrupt
+//   gpio__reset(P_CLOCK); // Start the clock LOW
+
+//   // Get the time to next interrupt
+//   duration = dur[numPanels][led_matrix.plane];
+
+//   // Borrowing a technique here from Ray's Logic:
+//   // www.rayslogic.com/propeller/Programming/AdafruitRGB/AdafruitRGB.htm
+//   // This code cycles through all four planes for each scanline before
+//   // advancing to the next line.  While it might seem beneficial to
+//   // advance lines every time and interleave the planes to reduce
+//   // vertical scanning artifacts, in practice with this panel it causes
+//   // a green 'ghosting' effect on black pixels, a much worse artifact.
+
+//   if (++led_matrix.plane >= nPlanes) { // Advance plane counter.  Maxed out?
+//     led_matrix.plane = 0;              // Yes, reset to plane 0, and
+//     if (++led_matrix.row >=
+//         led_matrix.nRows) {              // advance row counter.  Maxed out?
+//       led_matrix.row = 0;                // Yes, reset row counter, then...
+//       if (led_matrix.swapflag == true) { // Swap front/back buffers if
+//       requested
+//         led_matrix.backindex = 1 - led_matrix.backindex;
+//         led_matrix.swapflag = false;
+//       }
+//       led_matrix.buffptr =
+//           led_matrix
+//               .matrixbuff[1 - led_matrix.backindex]; // Reset into front
+//               buffer
+//     }
+//   } else if (led_matrix.plane == 1) {
+//     // Plane 0 was loaded on prior interrupt invocation and is about to
+//     // latch now, so update the row address lines before we do that:
+
+//     (led_matrix.row & 0x1) ? gpio__set(P_addrA) : gpio__reset(P_addrA);
+//     (led_matrix.row & 0x2) ? gpio__set(P_addrB) : gpio__reset(P_addrB);
+//     (led_matrix.row & 0x4) ? gpio__set(P_addrC) : gpio__reset(P_addrC);
+//     if (led_matrix.nRows > 8) {
+//       (led_matrix.row & 0x8) ? gpio__set(P_addrD) : gpio__reset(P_addrD);
+//     }
+//   }
+
+//   // buffptr, being 'volatile' type, doesn't take well to optimization.
+//   // A local register copy can speed some things up:
+//   ptr = (uint8_t *)led_matrix.buffptr;
+
+//   // RESET timer duration
+//   // refreshTimer.resetPeriod_SIT(duration, uSec);
+
+//   gpio__reset(P_OE);    // Re-enable output
+//   gpio__reset(P_LATCH); // Latch down
+
+//   if (led_matrix.plane > 0) {
+
+//     // Planes 1-3 must be unpacked and bit-banged
+//     for (i = 0; i < WIDTH; i++) {
+
+//       (ptr[i] & 0x04) ? gpio__set(P_R1) : gpio__reset(P_R1); // R1
+//       (ptr[i] & 0x08) ? gpio__set(P_G1) : gpio__reset(P_G1); // G1
+//       (ptr[i] & 0x10) ? gpio__set(P_B1) : gpio__reset(P_B1); // B1
+//       (ptr[i] & 0x20) ? gpio__set(P_R2) : gpio__reset(P_R2); // R2
+//       (ptr[i] & 0x40) ? gpio__set(P_G2) : gpio__reset(P_G2); // G2
+//       (ptr[i] & 0x80) ? gpio__set(P_B2) : gpio__reset(P_B2); // B2
+//       gpio__set(P_CLOCK);                                    // hi
+//       gpio__reset(P_CLOCK);                                  // lo
+//     }
+
+//     led_matrix.buffptr += WIDTH;
+//   } else {
+//     // Plane 0 has its data packed into the 2 least bits not
+//     // used by the other planes.  This works because the unpacking and
+//     // output for plane 0 is handled while plane 3 is being displayed...
+//     // because binary coded modulation is used (not PWM), that plane
+//     // has the longest display interval, so the extra work fits.
+
+//     for (i = 0; i < WIDTH; i++) {
+//       uint8_t bits = (ptr[i] << 6) | ((ptr[i + WIDTH] << 4) & 0x30) |
+//                      ((ptr[i + WIDTH * 2] << 2) & 0x0C);
+
+//       (bits & 0x04) ? gpio__set(P_R1) : gpio__reset(P_R1); // R1
+//       (bits & 0x08) ? gpio__set(P_G1) : gpio__reset(P_G1); // G1
+//       (bits & 0x10) ? gpio__set(P_B1) : gpio__reset(P_B1); // B1
+//       (bits & 0x20) ? gpio__set(P_R2) : gpio__reset(P_R2); // R2
+//       (bits & 0x40) ? gpio__set(P_G2) : gpio__reset(P_G2); // G2
+//       (bits & 0x80) ? gpio__set(P_B2) : gpio__reset(P_B2); // B2
+//       gpio__set(P_CLOCK);                                  // hi
+//       gpio__reset(P_CLOCK);                                // lo
+//     }
+//   }
+// }
+
 void updateDisplay(void) {
   uint8_t i, *ptr;
-  uint16_t duration, pins;
 
   gpio__set(P_OE);      // Disable LED output during row/plane switchover
   gpio__set(P_LATCH);   // Latch data loaded during *prior* interrupt
   gpio__reset(P_CLOCK); // Start the clock LOW
 
-  // Get the time to next interrupt
-  duration = dur[numPanels][led_matrix.plane];
-
-  // Borrowing a technique here from Ray's Logic:
-  // www.rayslogic.com/propeller/Programming/AdafruitRGB/AdafruitRGB.htm
-  // This code cycles through all four planes for each scanline before
-  // advancing to the next line.  While it might seem beneficial to
-  // advance lines every time and interleave the planes to reduce
-  // vertical scanning artifacts, in practice with this panel it causes
-  // a green 'ghosting' effect on black pixels, a much worse artifact.
-
   if (++led_matrix.plane >= nPlanes) { // Advance plane counter.  Maxed out?
     led_matrix.plane = 0;              // Yes, reset to plane 0, and
     if (++led_matrix.row >=
-        led_matrix.nRows) {              // advance row counter.  Maxed out?
-      led_matrix.row = 0;                // Yes, reset row counter, then...
-      if (led_matrix.swapflag == true) { // Swap front/back buffers if requested
-        led_matrix.backindex = 1 - led_matrix.backindex;
-        led_matrix.swapflag = false;
-      }
+        led_matrix.nRows) { // advance row counter.  Maxed out?
+      led_matrix.row = 0;   // Yes, reset row counter, then...
       led_matrix.buffptr =
           led_matrix
               .matrixbuff[1 - led_matrix.backindex]; // Reset into front buffer
@@ -283,7 +401,7 @@ void updateDisplay(void) {
   if (led_matrix.plane > 0) {
 
     // Planes 1-3 must be unpacked and bit-banged
-    for (i = 0; i < WIDTH; i++) {
+    for (i = 0; i < 1; i++) {
 
       (ptr[i] & 0x04) ? gpio__set(P_R1) : gpio__reset(P_R1); // R1
       (ptr[i] & 0x08) ? gpio__set(P_G1) : gpio__reset(P_G1); // G1
@@ -303,7 +421,7 @@ void updateDisplay(void) {
     // because binary coded modulation is used (not PWM), that plane
     // has the longest display interval, so the extra work fits.
 
-    for (i = 0; i < WIDTH; i++) {
+    for (i = 0; i < 1; i++) {
       uint8_t bits = (ptr[i] << 6) | ((ptr[i + WIDTH] << 4) & 0x30) |
                      ((ptr[i + WIDTH * 2] << 2) & 0x0C);
 
