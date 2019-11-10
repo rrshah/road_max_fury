@@ -1,8 +1,6 @@
 /*
-
 scons
-python nxp-programmer/flash.py --port COM6 --input
-_build_lpc40xx_freertos\lpc40xx_freertos.bin
+python nxp-programmer/flash.py --port COM6 --input _build_lpc40xx_freertos\lpc40xx_freertos.bin
 
 */
 
@@ -22,21 +20,7 @@ static void uart_task(void *params);
 
 static gpio_s led0, led1;
 
-RGBmatrixPanel led_matrix;
-
-void setup_LED_Matrix() {
-  RGBmatrixPanel_init(false, WIDTH);
-  led_matrix__begin();
-}
-
 int main(void) {
-
-  setup_LED_Matrix();
-  drawPixel(0, 0, Color333(7, 7, 7));
-  //   // drawPixel(0, 0, Color333(7, 7, 7));
-
-  //   drawPixel(17, 0, Color333(0, 7, 0));
-  //   drawPixel(20, 20, Color333(7, 0, 0));
 
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
