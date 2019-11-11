@@ -1,0 +1,8 @@
+# ignore all files in the following directory
+_build_lpc40xx_freertos/
+.vscode/
+
+#ignore
+*.dblite
+
+README-SCons.md
