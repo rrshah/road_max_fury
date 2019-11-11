@@ -102,19 +102,37 @@ void led_matrix__init(uint8_t matrix_buffer[][LED_MATRIX_WIDTH])
     for (int i = 0; i < LED_MATRIX_ROWS; i++)
     {
         led_matrix_buffer[i] = matrix_buffer[i];
-        memset(led_matrix_buffer[i], 0, LED_MATRIX_WIDTH);
+        memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
     }
 }
 
-void drawPixel(int16_t x, int16_t y, uint16_t c) {
-  if ((y < 0) || (y >= LED_MATRIX_WIDTH) || (x < 0) ||
-      (x >= LED_MATRIX_HEIGHT)) {
-    return;
-  }
+bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color)
+{
+    if ((y < 0) || (y >= LED_MATRIX_WIDTH) || (x < 0) ||
+        (x >= LED_MATRIX_HEIGHT))
+    {
+        return false;
+    }
 
-  if (x > 15) {
-    led_matrix_buffer[x - 16][y] |= (c << 3);
-  } else {
-    led_matrix_buffer[x][y] |= c;
-  }
+    if (x > (LED_MATRIX_ROWS - 1))
+    {
+        led_matrix_buffer[x - 16][y] |= (color << 3);
+    } 
+    else {
+        led_matrix_buffer[x][y] |= color;
+    }
+    return true;
+}
+
+void drawPixel(int16_t x, int16_t y, uint16_t c)
+{
+    led_matrix__drawPixel(x, y, c);
+}
+
+void led_matrix__drawAllPixels(uint16_t color)
+{
+    for (int i = 0; i < LED_MATRIX_ROWS; i++)
+    {
+        memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color), LED_MATRIX_COLUMNS);
+    }        
 }
