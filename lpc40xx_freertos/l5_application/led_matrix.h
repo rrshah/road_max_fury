@@ -11,8 +11,12 @@
 #define LED_MATRIX_COLUMNS 64
 
 void led_matrix__init(uint8_t matrix_buffer[][LED_MATRIX_WIDTH]);
-bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color);
+void led_matrix__setupLedMatrixPins(void);
+void led_matrix__setDefaultPinStates(void);
+
+    bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color);
 //To match function prototype required for AdafruitGFX library
 void drawPixel(int16_t x, int16_t y, uint16_t c);
 void led_matrix__drawAllPixels(uint16_t color);
- void led_matrix__updateDisplay(void);
+void led_matrix__turnOffAllPixels(void);
+void led_matrix__updateDisplay(void);

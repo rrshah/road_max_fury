@@ -26,6 +26,8 @@ the 4th path is for the tests.
 #include <stdio.h>
 #include <string.h>
 #include "led_matrix.h"
+#include "Mockgpio.h"
+#include "Mockdelay.h"
 
 static uint8_t led_matrix_buffer[16][64];
 
@@ -103,4 +105,46 @@ void test_glow_all_pixels(void)
     {
         TEST_ASSERT_EQUAL_INT8_ARRAY(expected_led_matrix_buffer[i], led_matrix_buffer[i], (64));
     }
+}
+
+void test_turnoff_all_pixels(void)
+{
+    led_matrix__drawAllPixels(7);
+    led_matrix__turnOffAllPixels();
+
+    uint8_t expected_led_matrix_buffer[16][64];
+    memset(expected_led_matrix_buffer, 0, (16 * 64));
+
+    for (int i = 0; i < LED_MATRIX_ROWS; i++)
+    {
+        TEST_ASSERT_EQUAL_INT8_ARRAY(expected_led_matrix_buffer[i], led_matrix_buffer[i], (64));
+    }
+}
+
+// static gpio_s P_addrA; // addrA
+// static gpio_s P_addrB; // addrB
+// static gpio_s P_addrC; // addrC
+// static gpio_s P_addrD; // addrD
+// static gpio_s P_LATCH; // LATCH
+// static gpio_s P_OE;    // OE
+// static gpio_s P_CLOCK; // CLOCK
+// static gpio_s P_R1;    // R1
+// static gpio_s P_G1;    // G1
+// static gpio_s P_B1;    // B1
+// static gpio_s P_R2;    // R2
+// static gpio_s P_G2;    // G2
+// static gpio_s P_B2;    // B2
+
+void test_updateDisplay(void)
+{
+    // gpio__set_Expect(P_OE);
+    // gpio__set_Expect(P_LATCH);
+    // gpio__reset_Expect(P_CLOCK);
+
+    // delay__us_Expect(1000);
+
+    //     gpio__reset_Expect(P_OE);
+    // gpio__reset_Expect(P_LATCH);
+
+
 }
