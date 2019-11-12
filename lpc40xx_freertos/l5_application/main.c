@@ -52,13 +52,13 @@ int main(void) {
 }
 
 static void led_matrix_task(void *params) {
-  led_matrix__init();
-  drawPixel(0, 0, 1);
+  //   led_matrix__init();
+  //   drawPixel(0, 0, 1);
 
-  while (true) {
-    led_matrix__updateDisplay();
-    vTaskDelay(1);
-  }
+  //   while (true) {
+  //     led_matrix__updateDisplay();
+  //     vTaskDelay(1);
+  //   }
 }
 
 static void blink_task(void *params) {

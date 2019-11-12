@@ -125,9 +125,9 @@ void test_turnoff_all_pixels(void)
 // static gpio_s P_addrB; // addrB
 // static gpio_s P_addrC; // addrC
 // static gpio_s P_addrD; // addrD
-// static gpio_s P_LATCH; // LATCH
-// static gpio_s P_OE;    // OE
-// static gpio_s P_CLOCK; // CLOCK
+static gpio_s P_LATCH; // LATCH
+static gpio_s P_OE;    // OE
+static gpio_s P_CLOCK; // CLOCK
 // static gpio_s P_R1;    // R1
 // static gpio_s P_G1;    // G1
 // static gpio_s P_B1;    // B1
@@ -135,16 +135,99 @@ void test_turnoff_all_pixels(void)
 // static gpio_s P_G2;    // G2
 // static gpio_s P_B2;    // B2
 
-void test_updateDisplay(void)
+void test_updateDisplay_row_0_pixel_0_0(void)
 {
-    // gpio__set_Expect(P_OE);
-    // gpio__set_Expect(P_LATCH);
-    // gpio__reset_Expect(P_CLOCK);
+    //Glow pixel (0,0), color 7
+    //led_matrix_buffer[0][0] = 0x03;
+    led_matrix__drawPixel(0,0, 7);
 
-    // delay__us_Expect(1000);
+        // STEP 2
+        gpio__set_Expect(P_OE);
+    gpio__set_Expect(P_LATCH);
+    gpio__reset_Expect(P_CLOCK);
 
-    //     gpio__reset_Expect(P_OE);
-    // gpio__reset_Expect(P_LATCH);
+    // STEP 3
+    for (uint32_t i = 0; i < 4; i++){
+        gpio__reset_ExpectAnyArgs();
+    }       
 
+    delay__us_Expect(1000);
 
+    // STEP 4
+    gpio__reset_Expect(P_OE);
+    gpio__reset_Expect(P_LATCH);
+
+    // STEP 1
+    
+    //For target pixel
+    gpio__set_ExpectAnyArgs();
+    gpio__set_ExpectAnyArgs();
+    gpio__set_ExpectAnyArgs();
+    gpio__reset_ExpectAnyArgs();
+    gpio__reset_ExpectAnyArgs();
+    gpio__reset_ExpectAnyArgs();
+    //For remaining 63 pixels in a row
+    for (uint32_t i = 0; i < 63*6; i++)
+    {
+        gpio__reset_ExpectAnyArgs();
+    }
+
+    //Generate 64 clock pulses
+    for (uint32_t i = 0; i < 64; i++)
+    {
+        gpio__reset_ExpectAnyArgs();
+        gpio__set_ExpectAnyArgs();
+    }
+
+        /*********************************************/
+        led_matrix__updateDisplay();
 }
+
+// void test_updateDisplay_row_0_pixel_5_5(void)
+// {
+//     //Glow pixel (0,0), color 7
+//     //led_matrix_buffer[0][0] = 0x03;
+//     led_matrix__drawPixel(5, 5, 2);
+
+//     // STEP 2
+//     gpio__set_Expect(P_OE);
+//     gpio__set_Expect(P_LATCH);
+//     gpio__reset_Expect(P_CLOCK);
+
+//     // STEP 3
+//     gpio__set_Expect(P_addrA);
+//     gpio__reset_Expect(P_addrB);
+//     gpio__set_Expect(P_addrC);
+//     gpio__reset_Expect(P_addrD);
+
+//     delay__us_Expect(1000);
+
+//     // STEP 4
+//     gpio__reset_Expect(P_OE);
+//     gpio__reset_Expect(P_LATCH);
+
+//     // STEP 1
+
+//     //For target pixel
+//     gpio__reset_Expect(P_B1);
+//     gpio__set_Expect(P_G1);
+//     gpio__reset_Expect(P_R1);
+//     gpio__reset_Expect(P_B2);
+//     gpio__reset_Expect(P_G2);
+//     gpio__reset_Expect(P_R2);
+//     //For remaining 63 pixels in a row
+//     for (uint32_t i = 0; i < 63 * 6; i++)
+//     {
+//         gpio__reset_ExpectAnyArgs();
+//     }
+
+//     //Generate 64 clock pulses
+//     for (uint32_t i = 0; i < 64; i++)
+//     {
+//         gpio__reset_ExpectAnyArgs();
+//         gpio__set_ExpectAnyArgs();
+//     }
+
+//     /*********************************************/
+//     led_matrix__updateDisplay();
+// }
