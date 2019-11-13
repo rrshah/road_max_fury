@@ -6,12 +6,12 @@
 enum {
   black_0 = 0,
   blue_1 = 1,
-  green_2,
-  cyan_3,
+  green_2 = 2,
+  cyan_3 = 3,
   red_4,
   magenta_5,
   yellow_6,
-  white_7
+  white_7 = 7
 } colors;
 
 #define LED_MATRIX_HEIGHT 32
