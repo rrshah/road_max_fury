@@ -1,6 +1,18 @@
 #pragma once
+
 #include <stdbool.h>
 #include <stdint.h>
+
+enum {
+  black_0 = 0,
+  blue_1 = 1,
+  green_2,
+  cyan_3,
+  red_4,
+  magenta_5,
+  yellow_6,
+  white_7
+} colors;
 
 #define LED_MATRIX_HEIGHT 32
 #define LED_MATRIX_WIDTH 64
@@ -20,3 +32,8 @@ void drawPixel(int16_t x, int16_t y, uint16_t c);
 void led_matrix__drawAllPixels(uint16_t color);
 void led_matrix__turnOffAllPixels(void);
 void led_matrix__updateDisplay(void);
+
+/** @brief Updates LED Matrix Row
+ *  @param row_to_display (row 0 to row 31)
+ */
+void led_matrix__updateRowOfDisplay(uint8_t row_to_display);
