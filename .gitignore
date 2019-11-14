@@ -2,8 +2,17 @@
 _build_lpc40xx_freertos/
 .vscode/
 site_scons/
+compiler/
+doc/
+installs/
+nxp-programmer/
+test/
 
 #ignore
 *.dblite
-
+SConscript
+SConstruct
 README-SCons.md
+README-GETTING-STARTED.md
+env_arm
+windows_cmdline.bat
