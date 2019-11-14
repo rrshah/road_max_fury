@@ -137,119 +137,133 @@ void test_turnoff_all_pixels(void)
     }
 }
 
-// static gpio_s P_addrA; // addrA
-// static gpio_s P_addrB; // addrB
-// static gpio_s P_addrC; // addrC
-// static gpio_s P_addrD; // addrD
-// static gpio_s P_LATCH; // LATCH
-// static gpio_s P_OE;    // OE
-// static gpio_s P_CLOCK; // CLOCK
-// static gpio_s P_R1;    // R1
-// static gpio_s P_G1;    // G1
-// static gpio_s P_B1;    // B1
-// static gpio_s P_R2;    // R2
-// static gpio_s P_G2;    // G2
-// static gpio_s P_B2;    // B2
 
-// void test_updateDisplay_row_0_pixel_0_0(void)
-// {
-//     //Glow pixel (0,0), color 7
-//     //led_matrix_buffer[0][0] = 0x03;
-//     led_matrix__drawPixel(0,0, 7);
 
-//         // STEP 2
-//         gpio__set_Expect(P_OE);
-//     gpio__set_Expect(P_LATCH);
-//     gpio__reset_Expect(P_CLOCK);
+static gpio_s P_addrA; // addrA
+static gpio_s P_addrB; // addrB
+static gpio_s P_addrC; // addrC
+static gpio_s P_addrD; // addrD
+static gpio_s P_LATCH; // LATCH
+static gpio_s P_OE;    // OE
+static gpio_s P_CLOCK; // CLOCK
+static gpio_s P_R1;    // R1
+static gpio_s P_G1;    // G1
+static gpio_s P_B1;    // B1
+static gpio_s P_R2;    // R2
+static gpio_s P_G2;    // G2
+static gpio_s P_B2;    // B2
 
-//     // STEP 3
-//     for (uint32_t i = 0; i < 4; i++){
-//         gpio__reset_ExpectAnyArgs();
-//     }       
+void test_select_next_row_0(void)
+{
+    gpio__reset_Expect(P_addrA);
+    gpio__reset_Expect(P_addrB);
+    gpio__reset_Expect(P_addrC);
+    gpio__reset_Expect(P_addrD);
 
-//     delay__us_Expect(250);
+    led_matrix__selectRow(0);
+}
 
-//     // STEP 4
-//     gpio__reset_Expect(P_OE);
-//     gpio__reset_Expect(P_LATCH);
+void test_select_next_row_7(void)
+{
+    gpio__set_Expect(P_addrA);
+    gpio__set_Expect(P_addrB);
+    gpio__set_Expect(P_addrC);
+    gpio__reset_Expect(P_addrD);
 
-//     // STEP 1
-    
-//     //For target pixel
-//     gpio__set_ExpectAnyArgs();
-//     gpio__set_ExpectAnyArgs();
-//     gpio__set_ExpectAnyArgs();
-//     gpio__reset_ExpectAnyArgs();
-//     gpio__reset_ExpectAnyArgs();
-//     gpio__reset_ExpectAnyArgs();
-//     //For remaining 63 pixels in a row
-//     for (uint32_t i = 0; i < 63*6; i++)
-//     {
-//         gpio__reset_ExpectAnyArgs();
-//     }
+    led_matrix__selectRow(7);
+}
 
-//     //Generate 64 clock pulses
-//     for (uint32_t i = 0; i < 64; i++)
-//     {
-//         gpio__reset_ExpectAnyArgs();
-//         gpio__set_ExpectAnyArgs();
-//     }
+void test_select_next_row_15(void)
+{
+    gpio__set_Expect(P_addrA);
+    gpio__set_Expect(P_addrB);
+    gpio__set_Expect(P_addrC);
+    gpio__set_Expect(P_addrD);
 
-//         /*********************************************/
-//         led_matrix__updateRowOfDisplay(0);
-// }
+    led_matrix__selectRow(15);
+}
 
-// void test_updateDisplay_row_5_pixel_5_5(void)
-// {
-//     //Glow pixel (0,0), color 7
-//     //led_matrix_buffer[0][0] = 0x03;
-//     led_matrix__drawPixel(5, 5, 2);
+void test_select_next_row_16(void)
+{
+    gpio__reset_Expect(P_addrA);
+    gpio__reset_Expect(P_addrB);
+    gpio__reset_Expect(P_addrC);
+    gpio__reset_Expect(P_addrD);
 
-//     // STEP 2
-//     gpio__set_Expect(P_OE);
-//     gpio__set_Expect(P_LATCH);
-//     gpio__reset_Expect(P_CLOCK);
+    led_matrix__selectRow(16);
+}
 
-//     // STEP 3
-//     gpio__set_Expect(P_addrA);
-//     gpio__reset_Expect(P_addrB);
-//     gpio__set_Expect(P_addrC);
-//     gpio__reset_Expect(P_addrD);
+void test_select_next_row_20(void)
+{
+    gpio__reset_Expect(P_addrA);
+    gpio__reset_Expect(P_addrB);
+    gpio__set_Expect(P_addrC);
+    gpio__reset_Expect(P_addrD);
 
-//     delay__us_Expect(250);
+    led_matrix__selectRow(20);
+}
 
-//     // STEP 4
-//     gpio__reset_Expect(P_OE);
-//     gpio__reset_Expect(P_LATCH);
+void test_de_assert_output_enable_latch(void)
+{
+    gpio__set_Expect(P_OE);
+    gpio__set_Expect(P_LATCH);
+    led_matrix__de_assert_output_enable_latch();
+}
 
-//     // STEP 1
+void test_assert_output_disable_latch(void)
+{
+    gpio__reset_Expect(P_OE);
+    gpio__reset_Expect(P_LATCH);
+    led_matrix__assert_output_disable_latch();
+}
 
-//     //For target pixel
-//     gpio__reset_Expect(P_B1);
-//     gpio__set_Expect(P_G1);
-//     gpio__reset_Expect(P_R1);
-//     gpio__reset_Expect(P_B2);
-//     gpio__reset_Expect(P_G2);
-//     gpio__reset_Expect(P_R2);
-//     //For remaining 63 pixels in a row
-//     for (uint32_t i = 0; i < 63 * 6; i++)
-//     {
-//         gpio__reset_ExpectAnyArgs();
-//     }
+void test_clockIn_Pixel_data(void)
+{
+    //For data
+    gpio__reset_Expect(P_B1);
+    gpio__reset_Expect(P_G1);
+    gpio__reset_Expect(P_R1);
+    gpio__reset_Expect(P_B2);
+    gpio__reset_Expect(P_G2);
+    gpio__reset_Expect(P_R2);
 
-//     //Generate 64 clock pulses
-//     for (uint32_t i = 0; i < 64; i++)
-//     {
-//         gpio__reset_ExpectAnyArgs();
-//         gpio__set_ExpectAnyArgs();
-//     }
+    //For clock
+    gpio__reset_Expect(P_CLOCK);
+    gpio__set_Expect(P_CLOCK);
 
-//     /*********************************************/
-//     led_matrix__updateRowOfDisplay(5);
-// }
+    led_matrix__clock_in_pixel_data(0b00000000);
+}
 
-//How to test this
-// void test_updateDisplay(void)
-// {
+void test_clockIn_Pixel_data_2(void)
+{
+    //For data
+    gpio__reset_Expect(P_B1);
+    gpio__set_Expect(P_G1);
+    gpio__reset_Expect(P_R1);
+    gpio__set_Expect(P_B2);
+    gpio__reset_Expect(P_G2);
+    gpio__set_Expect(P_R2);
 
-// }
+    //For clock
+    gpio__reset_Expect(P_CLOCK);
+    gpio__set_Expect(P_CLOCK);
+
+    led_matrix__clock_in_pixel_data(0b00101010);
+}
+
+void test_clockIn_Pixel_data_3(void)
+{
+    //For data
+    gpio__set_Expect(P_B1);
+    gpio__set_Expect(P_G1);
+    gpio__set_Expect(P_R1);
+    gpio__set_Expect(P_B2);
+    gpio__set_Expect(P_G2);
+    gpio__set_Expect(P_R2);
+
+    //For clock
+    gpio__reset_Expect(P_CLOCK);
+    gpio__set_Expect(P_CLOCK);
+
+    led_matrix__clock_in_pixel_data(0b00111111);
+}

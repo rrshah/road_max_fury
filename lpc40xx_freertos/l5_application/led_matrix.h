@@ -31,8 +31,12 @@ bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color);
 void drawPixel(int16_t x, int16_t y, uint16_t c);
 void led_matrix__drawAllPixels(uint16_t color);
 void led_matrix__turnOffAllPixels(void);
-void led_matrix__updateDisplay(void);
 
+void led_matrix__selectRow(uint8_t row);
+void led_matrix__de_assert_output_enable_latch(void);
+void led_matrix__assert_output_disable_latch(void);
+void led_matrix__clock_in_pixel_data(uint8_t pixel_value);
+void led_matrix__updateDisplay(void);
 /** @brief Updates LED Matrix Row
  *  @param row_to_display (row 0 to row 31)
  */
