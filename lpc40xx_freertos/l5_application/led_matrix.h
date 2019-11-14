@@ -3,16 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-enum {
-  black_0 = 0,
-  blue_1 = 1,
-  green_2 = 2,
-  cyan_3 = 3,
-  red_4,
-  magenta_5,
-  yellow_6,
-  white_7 = 7
-} colors;
+enum { black_0 = 0, blue_1 = 1, green_2 = 2, cyan_3 = 3, red_4, magenta_5, yellow_6, white_7 = 7 } colors;
 
 #define LED_MATRIX_HEIGHT 32
 #define LED_MATRIX_WIDTH 64

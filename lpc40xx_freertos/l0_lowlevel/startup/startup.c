@@ -36,8 +36,7 @@ void startup__initialize_interrupts(void) {
   const int first_peripheral = (int)WDT_IRQn;
   const int last_peripheral = first_peripheral + (int)EEPROM_IRQn;
 
-  for (int peripheral = first_peripheral; peripheral <= last_peripheral;
-       peripheral++) {
+  for (int peripheral = first_peripheral; peripheral <= last_peripheral; peripheral++) {
     NVIC_SetPriority(peripheral, peripheral_interrupt_priority);
   }
 

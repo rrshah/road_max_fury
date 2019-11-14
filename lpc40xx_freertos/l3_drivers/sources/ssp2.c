@@ -34,21 +34,14 @@ typedef enum {
 /**
  * Initialize the DMA struct pointers that we will use
  */
-static const size_t ssp2__dma_channel_memory_spacing =
-    (LPC_GPDMACH1_BASE - LPC_GPDMACH0_BASE);
+static const size_t ssp2__dma_channel_memory_spacing = (LPC_GPDMACH1_BASE - LPC_GPDMACH0_BASE);
 static LPC_GPDMACH_TypeDef *ssp2__dma_tx =
-    (LPC_GPDMACH_TypeDef *)(LPC_GPDMACH0_BASE +
-                            (SSP2__DMA_TX_CHANNEL *
-                             ssp2__dma_channel_memory_spacing));
+    (LPC_GPDMACH_TypeDef *)(LPC_GPDMACH0_BASE + (SSP2__DMA_TX_CHANNEL * ssp2__dma_channel_memory_spacing));
 static LPC_GPDMACH_TypeDef *ssp2__dma_rx =
-    (LPC_GPDMACH_TypeDef *)(LPC_GPDMACH0_BASE +
-                            (SSP2__DMA_RX_CHANNEL *
-                             ssp2__dma_channel_memory_spacing));
+    (LPC_GPDMACH_TypeDef *)(LPC_GPDMACH0_BASE + (SSP2__DMA_RX_CHANNEL * ssp2__dma_channel_memory_spacing));
 
 static void ssp2__dma_init(void);
-static ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer,
-                                                uint32_t num_bytes,
-                                                bool is_write_op);
+static ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer, uint32_t num_bytes, bool is_write_op);
 
 /*******************************************************************************
  *
@@ -88,11 +81,9 @@ uint8_t ssp2__exchange_byte(uint8_t byte_to_transmit) {
   return (uint8_t)(LPC_SSP2->DR & 0xFF);
 }
 
-void ssp2__dma_write_block(const unsigned char *output_block,
-                           size_t number_of_bytes) {
+void ssp2__dma_write_block(const unsigned char *output_block, size_t number_of_bytes) {
   const bool is_write_operation = true;
-  ssp2__dma_transfer_block((unsigned char *)output_block, number_of_bytes,
-                           is_write_operation);
+  ssp2__dma_transfer_block((unsigned char *)output_block, number_of_bytes, is_write_operation);
 }
 
 void ssp2__dma_read_block(unsigned char *input_block, size_t number_of_bytes) {
@@ -119,8 +110,7 @@ void ssp2__dma_init(void) {
   // (uint32_t)(&(LPC_SSP2->DR));
 }
 
-ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer,
-                                         uint32_t num_bytes, bool is_write_op) {
+ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer, uint32_t num_bytes, bool is_write_op) {
   uint32_t dummyBuffer = 0xffffffff;
 
   // DMA is limited to 12-bit transfer size
@@ -179,10 +169,8 @@ ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer,
    * Clear existing terminal count and error interrupts otherwise
    * DMA will not start.
    */
-  LPC_GPDMA->IntTCClear =
-      (1 << SSP2__DMA_RX_CHANNEL) | (1 << SSP2__DMA_TX_CHANNEL);
-  LPC_GPDMA->IntErrClr =
-      (1 << SSP2__DMA_RX_CHANNEL) | (1 << SSP2__DMA_TX_CHANNEL);
+  LPC_GPDMA->IntTCClear = (1 << SSP2__DMA_RX_CHANNEL) | (1 << SSP2__DMA_TX_CHANNEL);
+  LPC_GPDMA->IntErrClr = (1 << SSP2__DMA_RX_CHANNEL) | (1 << SSP2__DMA_TX_CHANNEL);
 
   /**
    * From SPI to buffer:
@@ -202,11 +190,9 @@ ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer,
     ssp2__dma_rx->CControl = num_bytes | terminal_count_interrupt_enable;
   } else {
     ssp2__dma_rx->CDestAddr = (uint32_t)buffer_pointer;
-    ssp2__dma_rx->CControl = num_bytes | increment_destination_address |
-                             terminal_count_interrupt_enable;
+    ssp2__dma_rx->CControl = num_bytes | increment_destination_address | terminal_count_interrupt_enable;
   }
-  ssp2__dma_rx->CConfig =
-      (SSP2__DMA_REQUEST_RX << 1) | transfer_peripheral_to_memory | dma_enable;
+  ssp2__dma_rx->CConfig = (SSP2__DMA_REQUEST_RX << 1) | transfer_peripheral_to_memory | dma_enable;
 
   /**
    * From buffer to SPI :
@@ -225,8 +211,7 @@ ssp_dma_error_e ssp2__dma_transfer_block(unsigned char *buffer_pointer,
     ssp2__dma_tx->CControl = num_bytes;
   }
   ssp2__dma_tx->CDestAddr = (uint32_t)(&(LPC_SSP2->DR));
-  ssp2__dma_tx->CConfig =
-      (SSP2__DMA_REQUEST_TX << 6) | transfer_memory_to_peripheral | dma_enable;
+  ssp2__dma_tx->CConfig = (SSP2__DMA_REQUEST_TX << 6) | transfer_memory_to_peripheral | dma_enable;
 
   /**
    * Channel must be fully configured and then enabled separately.

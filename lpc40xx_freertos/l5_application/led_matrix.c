@@ -33,9 +33,9 @@ void led_matrix__setupLedMatrixPins(void) {
   P_LATCH = gpio__construct_as_output(GPIO__PORT_2, 2);
   P_OE = gpio__construct_as_output(GPIO__PORT_2, 5);
   P_CLOCK = gpio__construct_as_output(GPIO__PORT_2, 0);
-  P_R1 = gpio__construct_as_output(GPIO__PORT_1, 0);
-  P_G1 = gpio__construct_as_output(GPIO__PORT_1, 1);
-  P_B1 = gpio__construct_as_output(GPIO__PORT_1, 4);
+  P_R1 = gpio__construct_as_output(GPIO__PORT_1, 14);
+  P_G1 = gpio__construct_as_output(GPIO__PORT_4, 29);
+  P_B1 = gpio__construct_as_output(GPIO__PORT_0, 7);
   P_R2 = gpio__construct_as_output(GPIO__PORT_4, 28);
   P_G2 = gpio__construct_as_output(GPIO__PORT_0, 6);
   P_B2 = gpio__construct_as_output(GPIO__PORT_0, 8);
@@ -83,14 +83,11 @@ bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   return true;
 }
 
-void drawPixel(int16_t x, int16_t y, uint16_t c) {
-  led_matrix__drawPixel(x, y, c);
-}
+void drawPixel(int16_t x, int16_t y, uint16_t c) { led_matrix__drawPixel(x, y, c); }
 
 void led_matrix__turnOnAllPixels(uint16_t color) {
   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
-    memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color),
-           LED_MATRIX_COLUMNS);
+    memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color), LED_MATRIX_COLUMNS);
   }
 }
 void led_matrix__turnOffAllPixels() {
