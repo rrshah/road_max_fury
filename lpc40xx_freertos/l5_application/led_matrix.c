@@ -87,7 +87,7 @@ void drawPixel(int16_t x, int16_t y, uint16_t c) {
   led_matrix__drawPixel(x, y, c);
 }
 
-void led_matrix__drawAllPixels(uint16_t color) {
+void led_matrix__turnOnAllPixels(uint16_t color) {
   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
     memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color),
            LED_MATRIX_COLUMNS);

@@ -70,7 +70,7 @@ static void led_matrix_task(void *params) {
 
   // led_matrix__updateDisplay();
   while (true) {
-    led_matrix__drawAllPixels(red_4);
+    led_matrix__turnOnAllPixels(red_4);
     printf("LED ON..\n");
     led_matrix__updateDisplay();
     vTaskDelay(1000);
