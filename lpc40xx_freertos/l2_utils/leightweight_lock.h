@@ -20,8 +20,8 @@
 typedef struct {
   StaticSemaphore_t signal_struct; ///< struct memory of 'signal'
   SemaphoreHandle_t signal;        ///< counting semaphore used as a 'signal'
-  atomic_int count;                ///< Count that tracks number of users waiting for
-                                   ///< leightweight_lock__acquire()
+  atomic_int count; ///< Count that tracks number of users waiting for
+                    ///< leightweight_lock__acquire()
 } leightweight_lock_s;
 
 /// Lock must be initialized before it is used

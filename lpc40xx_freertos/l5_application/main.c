@@ -26,9 +26,12 @@ int main(void) {
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
-  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
-  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
-  xTaskCreate(led_matrix_task, "led_matrix", (4096 / sizeof(void *)), NULL, PRIORITY_HIGH, NULL);
+  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(led_matrix_task, "led_matrix", (4096 / sizeof(void *)), NULL,
+              PRIORITY_HIGH, NULL);
 
   // It is advised to either run the uart_task, or the SJ2 command-line (CLI),
   // but not both Change '#if 0' to '#if 1' and vice versa to try it out
@@ -54,23 +57,24 @@ static void led_matrix_task(void *params) {
   led_matrix__setDefaultPinStates();
 
   // led_matrix__drawAllPixels(white_7);
-  led_matrix__drawPixel(0, 0, white_7);
-  led_matrix__drawPixel(5, 1, red_4);
+  led_matrix__turnOnAllPixels(red_4);
+  // led_matrix__drawPixel(0, 0, white_7);
+  // led_matrix__drawPixel(5, 1, red_4);
 
   //   led_matrix__drawPixel(21, 21, yellow_6);
   //   led_matrix__drawPixel(25, 43, magenta_5);
   //   led_matrix__drawPixel(20, 20, red_4);
 
-  led_matrix__drawPixel(31, 0, white_7);
-  led_matrix__drawPixel(31, 31, blue_1);
-  led_matrix__drawPixel(31, 63, green_2);
+  // led_matrix__drawPixel(31, 0, white_7);
+  // led_matrix__drawPixel(31, 31, blue_1);
+  // led_matrix__drawPixel(31, 63, green_2);
 
   // led_matrix__updateDisplay();
   while (true) {
     // led_matrix__turnOnAllPixels(red_4);
     // printf("LED ON..\n");
-    led_matrix__updateDisplay();
-    vTaskDelay(1);
+    // led_matrix__updateDisplay();
+    // vTaskDelay(1);
     // led_matrix__turnOffAllPixels();
     // printf("LED OFF..\n");
     // led_matrix__updateDisplay();
