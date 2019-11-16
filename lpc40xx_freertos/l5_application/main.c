@@ -71,9 +71,12 @@ static void led_matrix_task(void *params) {
   // led_matrix__drawPixel(31, 63, green_2);
 
   // drawLine(0, 0, 31, 63, red_4);
-  // drawRect(0, 0, 10, 20, white_7);
-  //fillRect(0, 0, 20, 10, green_2);
+  drawRect(0, 0, 10, 20, white_7);
+  // fillRect(0, 0, 20, 10, green_2);
+  // drawPixel(19, 20, yellow_6);
   // led_matrix__updateDisplay();
+  drawChar(5, 5, 'R', red_4, red_4, 1);
+
   while (true) {
     // led_matrix__turnOnAllPixels(red_4);
     // printf("LED ON..\n");
