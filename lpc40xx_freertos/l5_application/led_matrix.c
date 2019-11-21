@@ -27,17 +27,8 @@ static gpio_s P_B2;    // B2
 static const lpc_timer_e led_matrix__refresh_timer = LPC_TIMER__1;
 static const lpc_timer__mr_e led_matrix__refresh_timer_mr = LPC_TIMER__MR1;
 
-// static uint8_t led_matrix_buffer[16][64] = {0};
-static uint8_t *led_matrix_buffer[LED_MATRIX_COLUMNS];
+uint8_t led_matrix_buffer[16][64] = {0};
 static uint8_t row_to_display = 15;
-
-void led_matrix__init(uint8_t matrix_buffer[][LED_MATRIX_WIDTH]) {
-
-  for (int i = 0; i < LED_MATRIX_ROWS; i++) {
-    led_matrix_buffer[i] = matrix_buffer[i];
-    memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
-  }
-}
 
 bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   if ((y < 0) || (y >= 64) || (x < 0) || (x >= 32)) {

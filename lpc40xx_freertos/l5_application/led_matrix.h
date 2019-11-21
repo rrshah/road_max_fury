@@ -4,14 +4,14 @@
 #include <stdint.h>
 
 enum {
-  black_0 = 0,
-  blue_1 = 1,
-  green_2 = 2,
-  cyan_3 = 3,
-  red_4,
-  magenta_5,
-  yellow_6,
-  white_7 = 7
+  BLACK = 0,
+  BLUE = 1,
+  GREEN = 2,
+  CYAN = 3,
+  RED = 4,
+  MAGENTA = 5,
+  YELLOW = 6,
+  WHITE = 7
 } colors;
 
 #define LED_MATRIX_HEIGHT 32
@@ -22,7 +22,6 @@ enum {
 #define LED_MATRIX_ROWS (LED_MATRIX_HEIGHT / 2)
 #define LED_MATRIX_COLUMNS 64
 
-void led_matrix__init(uint8_t matrix_buffer[][LED_MATRIX_WIDTH]);
 void led_matrix__setupLedMatrixPins(void);
 void led_matrix__setDefaultPinStates(void);
 
