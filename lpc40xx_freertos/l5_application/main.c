@@ -26,6 +26,7 @@ static void blink_task(void *params);
 static void led_matrix_task(void *params);
 static void accelerometer_task(void *params);
 static void uart3_init(void);
+static void test_graphics_task(void *params);
 
 static gpio_s led0, led1;
 
@@ -45,11 +46,12 @@ int main(void) {
 
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
-  xTaskCreate(led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
 
   // xTaskCreate(uart3_loopback_test, "loopback_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
-  xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
+  // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
 
   sj2_cli__init();
 
@@ -176,4 +178,19 @@ static void uart3_init(void) {
   // Enable TX3, RX3 Pins
   gpio__construct_with_function(0, 1, GPIO__FUNCTION_2);
   gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
+}
+
+// smiley
+const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
+
+static void test_graphics_task(void *params) {
+
+  // fillRect(0, 0, 20, 10, YELLOW);
+  // drawChar(5, 5, 'R', red_4, red_4, 1);
+  drawBitmap(15, 31, smiley, 8, 9, RED);
+
+  while (true) {
+    // draw_car(player_car);
+    vTaskDelay(1);
+  }
 }
