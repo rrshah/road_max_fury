@@ -33,14 +33,15 @@ static void isr_hard_fault(void);
  */
 void isr_hard_fault_handler(unsigned long *hardfault_args);
 
-__attribute__((section(".interrupt_vector_table"))) const function__void_f interrupt_vector_table[] = {
+__attribute__((section(".interrupt_vector_table")))
+const function__void_f interrupt_vector_table[] = {
     /**
      * Core interrupt vectors
      */
-    (function__void_f)&_estack,  // 0 ARM: Initial stack pointer
-    entry_point,                 // 1 ARM: Initial program counter; your board will explode if
-                                 // you change this
-    halt,                        // 2 ARM: Non-maskable interrupt
+    (function__void_f)&_estack, // 0 ARM: Initial stack pointer
+    entry_point, // 1 ARM: Initial program counter; your board will explode if
+                 // you change this
+    halt,        // 2 ARM: Non-maskable interrupt
     isr_hard_fault,              // 3 ARM: Hard fault
     halt,                        // 4 ARM: Memory management fault
     halt,                        // 5 ARM: Bus fault
@@ -108,12 +109,15 @@ static void halt(void) {
 
   const unsigned isr_num = (*((uint8_t *)0xE000ED04));
   fprintf(stderr, "Unexpected CPU exception ");
-  fprintf(stderr, "%u (interrupt) has occured and the program will now halt\n", isr_num);
+  fprintf(stderr, "%u (interrupt) has occured and the program will now halt\n",
+          isr_num);
 
   if (isr_num < 16) {
-    static const char *table[] = {"estack",      "reset",    "NMI",      "hard fault", "memory fault", "bus fault",
-                                  "usage fault", "reserved", "reserved", "reserved",   "reserved",     "rtos",
-                                  "debug",       "reserved", "rtos",     "rtos"};
+    static const char *table[] = {
+        "estack",       "reset",     "NMI",         "hard fault",
+        "memory fault", "bus fault", "usage fault", "reserved",
+        "reserved",     "reserved",  "reserved",    "rtos",
+        "debug",        "reserved",  "rtos",        "rtos"};
     fprintf(stderr, "Exception appears to be '%s'\n", table[isr_num]);
   } else {
     fprintf(stderr, "Did you register the interrupt correctly using "
