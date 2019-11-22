@@ -18,3 +18,4 @@ README-SCons.md
 README-GETTING-STARTED.md
 env_arm
 windows_cmdline.bat
+.clang-format
