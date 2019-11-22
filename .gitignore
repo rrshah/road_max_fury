@@ -1,5 +1,6 @@
 # ignore all files in the following directory
 _build_lpc40xx_freertos/
+_build_mp3_decoder
 .vscode/
 site_scons/
 compiler/
