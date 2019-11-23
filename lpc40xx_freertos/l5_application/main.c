@@ -8,6 +8,7 @@ python nxp-programmer/flash.py
 
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "semphr.h"
 #include "task.h"
 
 #include "acceleration.h"
@@ -28,11 +29,14 @@ static void accelerometer_task(void *params);
 static void uart3_init(void);
 static void test_graphics_task(void *params);
 
+QueueHandle_t MP3_decoder_queue;
+
 static gpio_s led0, led1;
 
 car_t player_car;
 
 int main(void) {
+
   led_matrix__setupLedMatrixPins();
   led_matrix__setDefaultPinStates();
 
@@ -50,8 +54,13 @@ int main(void) {
   // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
   xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
 
-  // xTaskCreate(uart3_loopback_test, "loopback_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
-  // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
+  MP3_decoder_queue = xQueueCreate(10, sizeof(10));
+
+  xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL,
+              PRIORITY_LOW, NULL);
+
+  xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL,
+              PRIORITY_LOW, NULL);
 
   sj2_cli__init();
 
@@ -77,6 +86,7 @@ void move_car_right() {
 }
 
 static void accelerometer_task(void *params) {
+
   acceleration__axis_data_s acc_sensor_values;
   uint32_t y = 0;
   while (1) {
@@ -169,9 +179,12 @@ static void uart3_init(void) {
   static uint8_t rxq_storage[32];
   static uint8_t txq_storage[128];
 
-  // Make UART more efficient by backing it with RTOS queues (optional but highly recommended with RTOS)
-  QueueHandle_t rxq_handle = xQueueCreateStatic(sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
-  QueueHandle_t txq_handle = xQueueCreateStatic(sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
+  // Make UART more efficient by backing it with RTOS queues (optional but
+  // highly recommended with RTOS)
+  QueueHandle_t rxq_handle = xQueueCreateStatic(
+      sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
+  QueueHandle_t txq_handle = xQueueCreateStatic(
+      sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
 
   uart__enable_queues(UART__3, txq_handle, rxq_handle);
 

@@ -11,7 +11,8 @@ typedef void (*periodic_callbacks_f)(uint32_t);
  * elapsed It is specific to each callback, so 3 for 10Hz, means 300ms have
  * elapsed
  */
-void periodic_callbacks__initialize(void); ///< Invoked once by periodic_scheduler__initialize()
+void periodic_callbacks__initialize(
+    void); ///< Invoked once by periodic_scheduler__initialize()
 
 void periodic_callbacks__1Hz(uint32_t callback_count);
 void periodic_callbacks__10Hz(uint32_t callback_count);

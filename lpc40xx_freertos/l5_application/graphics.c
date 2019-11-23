@@ -6,11 +6,11 @@
 const uint8_t _width = 32;
 const uint8_t _height = 64;
 
-#define swap(a, b)                                                                                                     \
-  {                                                                                                                    \
-    int16_t t = a;                                                                                                     \
-    a = b;                                                                                                             \
-    b = t;                                                                                                             \
+#define swap(a, b)                                                             \
+  {                                                                            \
+    int16_t t = a;                                                             \
+    a = b;                                                                     \
+    b = t;                                                                     \
   }
 
 void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
@@ -52,9 +52,13 @@ void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
   }
 }
 
-void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) { drawLine(x, y, x, y + h - 1, color); }
+void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
+  drawLine(x, y, x, y + h - 1, color);
+}
 
-void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) { drawLine(x, y, x + w - 1, y, color); }
+void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
+  drawLine(x, y, x + w - 1, y, color);
+}
 
 void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
   for (int16_t i = x; i < x + w; i++) {
@@ -69,7 +73,8 @@ void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
   drawFastVLine(x + w - 1, y, h, color);
 }
 
-void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {
+void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
+              uint16_t bg, uint8_t size) {
   if (c < fontStart || c > fontEnd) {
     c = 0;
   } else {
