@@ -56,11 +56,9 @@ int main(void) {
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
-  xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL,
-              PRIORITY_LOW, NULL);
+  xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
-  xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL,
-              PRIORITY_LOW, NULL);
+  xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
   sj2_cli__init();
 
@@ -72,14 +70,12 @@ int main(void) {
 }
 
 void move_car_left() {
-  led_matrix__turnOffAllPixels();
   if (player_car.x > 0) {
     player_car.x -= 1;
   }
 }
 
 void move_car_right() {
-  led_matrix__turnOffAllPixels();
   if (player_car.x < (31 - 3)) {
     player_car.x += 1;
   }
@@ -139,9 +135,9 @@ static void led_matrix_task(void *params) {
   // fillRect(0, 0, 20, 10, green_2);
   // drawPixel(19, 20, yellow_6);
   // led_matrix__updateDisplay();
-  // drawChar(5, 5, 'R', red_4, red_4, 1);
 
   while (true) {
+    led_matrix__turnOffAllPixels();
     draw_car(player_car);
     // led_matrix__turnOnAllPixels(red_4);
     // printf("LED ON..\n");
@@ -151,7 +147,7 @@ static void led_matrix_task(void *params) {
     // printf("LED OFF..\n");
     // led_matrix__updateDisplay();
     // drawPixel(pixel_x, pixel_y, red_4);
-    vTaskDelay(1);
+    vTaskDelay(100);
   }
 }
 
@@ -181,10 +177,8 @@ static void uart3_init(void) {
 
   // Make UART more efficient by backing it with RTOS queues (optional but
   // highly recommended with RTOS)
-  QueueHandle_t rxq_handle = xQueueCreateStatic(
-      sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
-  QueueHandle_t txq_handle = xQueueCreateStatic(
-      sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
+  QueueHandle_t rxq_handle = xQueueCreateStatic(sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
+  QueueHandle_t txq_handle = xQueueCreateStatic(sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
 
   uart__enable_queues(UART__3, txq_handle, rxq_handle);
 
