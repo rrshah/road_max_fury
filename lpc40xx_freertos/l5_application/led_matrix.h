@@ -14,8 +14,8 @@ enum {
   WHITE = 7
 } colors;
 
-#define LED_MATRIX_HEIGHT 32
-#define LED_MATRIX_WIDTH 64
+#define LED_MATRIX_HEIGHT (64)
+#define LED_MATRIX_WIDTH (32)
 
 // It is half of the height..since we have 4
 // addr lines, thus (2^4 =) 16 addressable rows

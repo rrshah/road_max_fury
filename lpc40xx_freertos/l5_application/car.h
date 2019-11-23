@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#define CAR_WIDTH (4)
+#define CAR_HEIGHT (5)
 typedef struct car {
   uint8_t x;
   uint8_t y;
