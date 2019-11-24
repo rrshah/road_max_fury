@@ -19,15 +19,15 @@ python nxp-programmer/flash.py
 #include "uart.h"
 
 #include "car.h"
+#include "display_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "mp3_decoder_tasks.h"
 
 static void blink_task(void *params);
-static void led_matrix_task(void *params);
 static void accelerometer_task(void *params);
 static void uart3_init(void);
-static void test_graphics_task(void *params);
+void draw_car_task(void *params);
 
 QueueHandle_t MP3_decoder_queue;
 
@@ -50,13 +50,14 @@ int main(void) {
 
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
-  // xTaskCreate(led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
-  // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(draw_car_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
-  xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
   xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
@@ -115,42 +116,6 @@ static void accelerometer_task(void *params) {
   }
 }
 
-static void led_matrix_task(void *params) {
-
-  // led_matrix__drawAllPixels(white_7);
-  // led_matrix__turnOnAllPixels(red_4);
-  // led_matrix__drawPixel(0, 0, white_7);
-  // led_matrix__drawPixel(5, 1, red_4);
-
-  // led_matrix__drawPixel(21, 21, yellow_6);
-  // led_matrix__drawPixel(25, 43, magenta_5);
-  // led_matrix__drawPixel(20, 20, red_4);
-
-  // led_matrix__drawPixel(31, 0, white_7);
-  // led_matrix__drawPixel(31, 31, blue_1);
-  // led_matrix__drawPixel(31, 63, green_2);
-
-  // drawLine(0, 0, 31, 63, red_4);
-  // drawRect(0, 0, 10, 20, white_7);
-  // fillRect(0, 0, 20, 10, green_2);
-  // drawPixel(19, 20, yellow_6);
-  // led_matrix__updateDisplay();
-
-  while (true) {
-    led_matrix__turnOffAllPixels();
-    draw_car(player_car);
-    // led_matrix__turnOnAllPixels(red_4);
-    // printf("LED ON..\n");
-    // led_matrix__updateDisplay();
-    // vTaskDelay(1);
-    // led_matrix__turnOffAllPixels();
-    // printf("LED OFF..\n");
-    // led_matrix__updateDisplay();
-    // drawPixel(pixel_x, pixel_y, red_4);
-    vTaskDelay(100);
-  }
-}
-
 static void blink_task(void *params) {
   const gpio_s led = *((gpio_s *)params);
 
@@ -187,17 +152,11 @@ static void uart3_init(void) {
   gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
 }
 
-// smiley
-const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
-
-static void test_graphics_task(void *params) {
-
-  // fillRect(0, 0, 20, 10, YELLOW);
-  // drawChar(5, 5, 'R', red_4, red_4, 1);
-  drawBitmap(15, 31, smiley, 8, 9, RED);
+void draw_car_task(void *params) {
 
   while (true) {
-    // draw_car(player_car);
-    vTaskDelay(1);
+
+    draw_car(player_car);
+    vTaskDelay(100);
   }
 }
