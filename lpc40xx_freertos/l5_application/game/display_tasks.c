@@ -5,10 +5,56 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
-#include "car.h"
 #include "display_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
+#include "object.h"
+
+#define BORDER_HEIGHT (52)
+#define BORDER_WIDTH (3)
+#define CAR_WIDTH (4)
+#define CAR_HEIGHT (5)
+
+extern const uint8_t car;
+bitmap_object player_car = {.x = 15, .y = 10, .height = 5, .width = 4, .color = CYAN, .image = &car};
+
+void move_car_left() {
+  if (player_car.x > BORDER_WIDTH) {
+    player_car.x -= 1;
+  }
+}
+
+void move_car_right() {
+  if (player_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH)) {
+    player_car.x += 1;
+  }
+}
+
+static void move() {
+  // move_obstacles();
+}
+
+static void draw_borders() {
+  fillRect(0, 0, BORDER_WIDTH, BORDER_HEIGHT, GREEN);
+  fillRect(29, 0, BORDER_WIDTH, BORDER_HEIGHT, GREEN);
+}
+
+// static void draw_score();
+static void draw_player_car() { object__draw(player_car); }
+// static void draw_obstacles();
+
+static void draw() {
+  draw_borders();
+  draw_player_car();
+}
+void display_task(void *params) {
+  while (true) {
+    led_matrix__turnOffAllPixels();
+    move();
+    draw();
+    vTaskDelay(200);
+  }
+}
 
 void test_led_matrix_task(void *params) {
 

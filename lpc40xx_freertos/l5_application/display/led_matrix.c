@@ -51,9 +51,10 @@ void led_matrix__turnOnAllPixels(uint16_t color) {
   }
 }
 void led_matrix__turnOffAllPixels() {
-  for (int i = 0; i < LED_MATRIX_ROWS; i++) {
-    memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
-  }
+  memset(led_matrix_buffer, 0, LED_MATRIX_HEIGHT * LED_MATRIX_WIDTH);
+  //   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
+  //     memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
+  //   }
 }
 
 static void led_matrix__selectRow(const uint8_t row) {

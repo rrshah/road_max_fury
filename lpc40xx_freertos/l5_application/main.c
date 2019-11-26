@@ -18,11 +18,11 @@ python nxp-programmer/flash.py
 #include "sj2_cli.h"
 #include "uart.h"
 
-#include "car.h"
 #include "display_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "mp3_decoder_tasks.h"
+#include "object.h"
 
 static void blink_task(void *params);
 static void accelerometer_task(void *params);
@@ -33,8 +33,6 @@ QueueHandle_t MP3_decoder_queue;
 
 static gpio_s led0, led1;
 
-car_t player_car;
-
 int main(void) {
 
   led_matrix__setupLedMatrixPins();
@@ -42,9 +40,6 @@ int main(void) {
 
   uart3_init();
 
-  player_car.x = 15;
-  player_car.y = 10;
-  player_car.color = CYAN;
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
@@ -53,7 +48,7 @@ int main(void) {
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
   // xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
   xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(draw_car_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(display_task, "display_task", 2048, NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
@@ -68,18 +63,6 @@ int main(void) {
                          // runs out of memory and fails
 
   return 0;
-}
-
-void move_car_left() {
-  if (player_car.x > 0) {
-    player_car.x -= 1;
-  }
-}
-
-void move_car_right() {
-  if (player_car.x < (31 - 3)) {
-    player_car.x += 1;
-  }
 }
 
 static void accelerometer_task(void *params) {
@@ -150,13 +133,4 @@ static void uart3_init(void) {
   // Enable TX3, RX3 Pins
   gpio__construct_with_function(0, 1, GPIO__FUNCTION_2);
   gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
-}
-
-void draw_car_task(void *params) {
-
-  while (true) {
-
-    draw_car(player_car);
-    vTaskDelay(100);
-  }
 }
