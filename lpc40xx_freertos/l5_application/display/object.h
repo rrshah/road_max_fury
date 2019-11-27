@@ -12,6 +12,8 @@ typedef struct b {
   uint8_t speed;
 } bitmap_object;
 
-void object__init();
-void object__move();
-void object__draw();
+// void object__init();
+void move_car_left();
+void move_car_right();
+void draw();
+void move();
