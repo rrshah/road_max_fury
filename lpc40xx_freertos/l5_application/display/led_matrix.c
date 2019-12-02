@@ -36,9 +36,9 @@ bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   }
 
   if (x < 16) {
-    led_matrix_buffer[x][y] |= color;
+    led_matrix_buffer[x][y] = color;
   } else {
-    led_matrix_buffer[x - 16][y] |= (color << 3);
+    led_matrix_buffer[x - 16][y] = (color << 3);
   }
   return true;
 }
@@ -51,7 +51,7 @@ void led_matrix__turnOnAllPixels(uint16_t color) {
   }
 }
 void led_matrix__turnOffAllPixels() {
-  memset(led_matrix_buffer, 0, LED_MATRIX_HEIGHT * LED_MATRIX_WIDTH);
+  memset(led_matrix_buffer, 0, 16 * LED_MATRIX_WIDTH);
   //   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
   //     memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
   //   }

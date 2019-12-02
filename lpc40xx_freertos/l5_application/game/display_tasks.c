@@ -11,11 +11,17 @@
 #include "object.h"
 
 void display_task(void *params) {
+  object__init_player_car();
+  printf("Display task Entered\n");
   while (true) {
-    led_matrix__turnOffAllPixels();
-    move();
-    draw();
-    vTaskDelay(200);
+    // led_matrix__turnOffAllPixels();
+    // move();
+    // draw();
+    draw_player_car();
+    vTaskDelay(1000);
+    move_car_right();
+    // vTaskDelay(100);
+    // draw_player_car();
   }
 }
 

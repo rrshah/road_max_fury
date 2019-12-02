@@ -47,14 +47,14 @@ int main(void) {
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
   // xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", 2048, NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
   // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
-  xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
   sj2_cli__init();
 
@@ -75,21 +75,21 @@ static void accelerometer_task(void *params) {
 
     switch (y) {
     case 0 ... 150:
-      printf("Go straight, y value=%lu\n", y);
+      // printf("Go straight, y value=%lu\n", y);
       break;
 
     case 151 ... 800:
       move_car_right();
-      printf("Go slight right, y value=%lu\n", y);
+      // printf("Go slight right, y value=%lu\n", y);
       break;
 
     case 3100 ... 3944:
       move_car_left();
-      printf("Go extreme left, y value=%lu\n", y);
+      // printf("Go extreme left, y value=%lu\n", y);
       break;
 
     case 3945 ... 4095:
-      printf("Go straight, y value=%lu\n", y);
+      // printf("Go straight, y value=%lu\n", y);
       break;
 
     default:

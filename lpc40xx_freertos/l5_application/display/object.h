@@ -17,3 +17,5 @@ void move_car_left();
 void move_car_right();
 void draw();
 void move();
+void object__init_player_car(void);
+void draw_player_car();
