@@ -15,13 +15,10 @@ void display_task(void *params) {
   printf("Display task Entered\n");
   while (true) {
     // led_matrix__turnOffAllPixels();
-    // move();
-    // draw();
-    draw_player_car();
-    vTaskDelay(1000);
-    move_car_right();
-    // vTaskDelay(100);
-    // draw_player_car();
+    move();
+    draw();
+
+    vTaskDelay(100);
   }
 }
 

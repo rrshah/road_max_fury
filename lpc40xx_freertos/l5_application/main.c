@@ -47,7 +47,7 @@ int main(void) {
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
   // xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
-  // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
   xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
