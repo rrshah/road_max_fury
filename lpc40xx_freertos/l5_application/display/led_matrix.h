@@ -13,8 +13,10 @@ enum { BLACK = 0, BLUE = 1, GREEN = 2, CYAN = 3, RED = 4, MAGENTA = 5, YELLOW = 
 
 void led_matrix__setupLedMatrixPins(void);
 void led_matrix__setDefaultPinStates(void);
+void led_matrix__init(uint8_t matrix_buffer[][64]);
+    // uint8_t** led_matrix__getBuffer(void);
 
-bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color);
+    bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color);
 // To match function prototype required for AdafruitGFX library
 void drawPixel(int16_t x, int16_t y, uint16_t c);
 void led_matrix__turnOnAllPixels(uint16_t color);
