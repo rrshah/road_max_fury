@@ -18,7 +18,7 @@ void display_task(void *params) {
     move();
     draw();
 
-    vTaskDelay(100);
+    vTaskDelay(30);
   }
 }
 

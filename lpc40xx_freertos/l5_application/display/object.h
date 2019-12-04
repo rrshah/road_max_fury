@@ -3,16 +3,18 @@
 #include <stdint.h>
 
 enum move { DOWN = 0, DOWN_AND_LEFT_RIGHT = 1 };
+enum direction { RIGHT = 0, LEFT = 1 };
 
 typedef struct b {
   uint8_t x, y;
   const uint8_t *image; // ptr->image
   bool isAlive;
   uint8_t color;
-  uint8_t movement_direction;
+  uint8_t movement_type;
   uint8_t height, width;
   uint8_t speed;
   uint8_t counter;
+  uint8_t direction;
 } bitmap_object;
 
 // void object__init();

@@ -13,24 +13,24 @@
 
 extern const uint8_t car[];
 
-static bitmap_object obstacle_cars[] = {{.x = 10,
-                                         .y = BORDER_HEIGHT,
-                                         .color = RED,
-                                         .image = car,
-                                         .movement_direction = DOWN,
-                                         .height = CAR_HEIGHT_WITH_PADDING,
-                                         .width = CAR_WIDTH_WITH_PADDING,
-                                         .speed = 1,
-                                         .counter = 0},
-                                        {.x = 20,
-                                         .y = BORDER_HEIGHT,
-                                         .color = YELLOW,
-                                         .image = car,
-                                         .movement_direction = DOWN,
-                                         .height = CAR_HEIGHT_WITH_PADDING,
-                                         .width = CAR_WIDTH_WITH_PADDING,
-                                         .speed = 10,
-                                         .counter = 0}};
+bitmap_object obstacle_cars[] = {{.x = 10,
+                                  .y = BORDER_HEIGHT - CAR_HEIGHT_WITH_PADDING,
+                                  .color = RED,
+                                  .image = car,
+                                  .movement_type = DOWN,
+                                  .height = CAR_HEIGHT_WITH_PADDING,
+                                  .width = CAR_WIDTH_WITH_PADDING,
+                                  .speed = 1,
+                                  .counter = 0},
+                                 {.x = 20,
+                                  .y = BORDER_HEIGHT - CAR_HEIGHT_WITH_PADDING,
+                                  .color = YELLOW,
+                                  .image = car,
+                                  .movement_type = DOWN_AND_LEFT_RIGHT,
+                                  .height = CAR_HEIGHT_WITH_PADDING,
+                                  .width = CAR_WIDTH_WITH_PADDING,
+                                  .speed = 30,
+                                  .counter = 0}};
 
 static bitmap_object player_car;
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
@@ -49,21 +49,39 @@ void object__init_player_car(void) {
   player_car.image = car;
 }
 
-static void move_obstacles(bitmap_object obstacle) {
-  obstacle.counter++;
-  // if (obstacle.counter != obstacle.speed) {
-  //  return;
-  //}
+static void move_obstacles(bitmap_object *obstacle) {
+  obstacle->counter++;
+  if (obstacle->counter < obstacle->speed) {
+    return;
+  }
 
-  switch (obstacle.movement_direction) {
+  switch (obstacle->movement_type) {
   case DOWN:
-    obstacle.y = obstacle.y - 1;
-    printf("Obstacle down, y - 1 = %d\n", obstacle.y);
+    obstacle->y = obstacle->y - 1;
     break;
+  case DOWN_AND_LEFT_RIGHT:
+    obstacle->y = obstacle->y - 1;
+    if (obstacle->direction == RIGHT) {
+      if (obstacle->x <
+          (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
+        obstacle->x = obstacle->x + 1;
+      } else {
+        obstacle->direction = LEFT;
+      }
+    } else {
+      if (obstacle->x > BORDER_WIDTH) {
+        obstacle->x = obstacle->x - 1;
+      } else {
+        obstacle->direction = RIGHT;
+      }
+    }
   }
 }
 
-void move() { move_obstacles(obstacle_cars[0]); }
+void move() {
+  move_obstacles(&obstacle_cars[0]);
+  move_obstacles(&obstacle_cars[1]);
+}
 
 static void draw_borders() {
   fillRect(0, 0, BORDER_WIDTH, BORDER_HEIGHT, GREEN);
@@ -75,13 +93,11 @@ void draw_player_car() { object__draw(player_car); }
 // static void draw_obstacles();
 
 void draw() {
-  // object__init_player_car();
   draw_player_car();
   draw_borders();
 
   object__draw(obstacle_cars[0]);
-
-  // led_matrix__drawPixel(5, 6, RED);
+  object__draw(obstacle_cars[1]);
 }
 
 void object__move(bitmap_object object) {}
