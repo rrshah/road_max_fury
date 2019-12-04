@@ -36,7 +36,8 @@ static bitmap_object player_car;
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
 
 void object__draw(bitmap_object object) {
-  drawBitmap(object.x, object.y, object.image, object.width, object.height, object.color);
+  drawBitmap(object.x, object.y, object.image, object.width, object.height,
+             object.color);
 }
 
 void object__init_player_car(void) {
@@ -56,7 +57,9 @@ static void move_obstacles(bitmap_object obstacle) {
 
   switch (obstacle.movement_direction) {
   case DOWN:
-    obstacle.y -= 1;
+    obstacle.y = obstacle.y - 1;
+    printf("Obstacle down, y - 1 = %d\n", obstacle.y);
+    break;
   }
 }
 
@@ -74,8 +77,10 @@ void draw_player_car() { object__draw(player_car); }
 void draw() {
   // object__init_player_car();
   draw_player_car();
+  draw_borders();
+
   object__draw(obstacle_cars[0]);
-  // draw_borders();
+
   // led_matrix__drawPixel(5, 6, RED);
 }
 

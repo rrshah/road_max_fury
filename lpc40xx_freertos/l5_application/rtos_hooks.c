@@ -23,14 +23,17 @@ static void halt(const char *message) {
 
 /// Invoked by FreeRTOS when it detects stack overflow: #if (0 !=
 /// configCHECK_FOR_STACK_OVERFLOW)
-void vApplicationStackOverflowHook(TaskHandle_t task_handle, signed char *task_name) {
+void vApplicationStackOverflowHook(TaskHandle_t task_handle,
+                                   signed char *task_name) {
   uart_puts__polled(UART__0, "stack overflow by this task:");
   halt((const char *)task_name);
 }
 
 // Invoked by FreeRTOS when there pvPortMalloc() function has encountered NULL
 // pointer to memory request #if (0 != configUSE_MALLOC_FAILED_HOOK)
-void vApplicationMallocFailedHook(void) { halt("vApplicationMallocFailedHook() called; no more RAM memory"); }
+void vApplicationMallocFailedHook(void) {
+  halt("vApplicationMallocFailedHook() called; no more RAM memory");
+}
 
 /**
  * FreeRTOS note:
@@ -52,27 +55,32 @@ void vApplicationTickHook(void) {
 void configASSERT_callback(unsigned line, const char *message) {
   uart_puts__polled(UART__0, "FreeRTOS ASSERT() occurred indicating an error "
                              "condition that should NEVER happen");
-  uart_puts__polled(UART__0, " - Did you call a blocking API or non FromISR() API inside an ISR?");
-  uart_puts__polled(UART__0, " - Did you forget to use fprintf(stderr) in an ISR?");
+  uart_puts__polled(
+      UART__0,
+      " - Did you call a blocking API or non FromISR() API inside an ISR?");
+  uart_puts__polled(UART__0,
+                    " - Did you forget to use fprintf(stderr) in an ISR?");
   uart_puts__polled(UART__0, "Here is the line of code that halted the CPU: ");
   halt(message);
 }
 
 // Copied from https://www.freertos.org/a00110.html, needed when #if (0 !=
 // configSUPPORT_STATIC_ALLOCATION)
-void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer,
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
+                                   StackType_t **ppxIdleTaskStackBuffer,
                                    uint32_t *pulIdleTaskStackSize) {
   static StaticTask_t xIdleTaskTCB;
   static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
 
-  *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;            // memory for the idle task
-  *ppxIdleTaskStackBuffer = uxIdleTaskStack;        // stack memory for the idle task
+  *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;     // memory for the idle task
+  *ppxIdleTaskStackBuffer = uxIdleTaskStack; // stack memory for the idle task
   *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE; // stack memory size
 }
 
 // #if (0 != configGENERATE_RUN_TIME_STATS)
 uint32_t freertos_hooks__get_run_time_counter_value(void) {
-  return (uint32_t)(sys_time__get_uptime_us() - freertos_run_time_counter_offset);
+  return (uint32_t)(sys_time__get_uptime_us() -
+                    freertos_run_time_counter_offset);
 }
 
 void freertos_hooks__reset_run_time_stats(void) {

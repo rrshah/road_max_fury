@@ -92,7 +92,8 @@ typedef void *app_cli__argument_t;
  * @param string This string should be output back to the source that sent the
  * CLI command
  */
-typedef void (*app_cli__print_string_function)(app_cli__argument_t argument, const char *string);
+typedef void (*app_cli__print_string_function)(app_cli__argument_t argument,
+                                               const char *string);
 
 /**
  * A command_name is composed of its name for the command_name and its help
@@ -118,10 +119,12 @@ typedef struct app_cli__command_s {
    * @returns true if command was successful, otherwise the CLI will print an
    * error for you
    */
-  app_cli_status_e (*app_cli_handler)(app_cli__argument_t argument, sl_string_t user_input_minus_command_name,
-                                      app_cli__print_string_function output_function);
+  app_cli_status_e (*app_cli_handler)(
+      app_cli__argument_t argument, sl_string_t user_input_minus_command_name,
+      app_cli__print_string_function output_function);
 
-  struct app_cli__command_s *pointer_of_next_command; ///< User should not use this member
+  struct app_cli__command_s
+      *pointer_of_next_command; ///< User should not use this member
 } app_cli__command_s;
 
 /**
@@ -131,7 +134,8 @@ typedef struct {
   app_cli__command_s *commands_head_pointer;
   size_t minimum_command_chars_to_match;
 
-  app_cli__print_string_function output_function; ///< This function is used to output CLI's response
+  app_cli__print_string_function
+      output_function; ///< This function is used to output CLI's response
   const char *terminal_string;
 } app_cli_s;
 
@@ -159,14 +163,16 @@ typedef struct {
  * Typyically this can be dashed line to separate CLI output, and it can also
  * include ASCII terminal chars (ETX, EOT)
  */
-app_cli_s app_cli__initialize(size_t minimum_command_chars_to_match, app_cli__print_string_function output_function,
+app_cli_s app_cli__initialize(size_t minimum_command_chars_to_match,
+                              app_cli__print_string_function output_function,
                               const char *terminal_string);
 
 /**
  * @param app_cli_command_static_memory A handler for the CLI; this memory
  * should not go out of scope
  */
-void app_cli__add_command_handler(app_cli_s *cli, app_cli__command_s *app_cli_command_static_memory);
+void app_cli__add_command_handler(
+    app_cli_s *cli, app_cli__command_s *app_cli_command_static_memory);
 
 /**
  * Processes an input command from the user
@@ -190,7 +196,8 @@ void app_cli__add_command_handler(app_cli_s *cli, app_cli__command_s *app_cli_co
  * around 128 bytes, but if one of the CLI handlers also use re-use it, then
  * size it according to your requirement
  */
-void app_cli__process_input(app_cli_s *cli, app_cli__argument_t cli_argument, sl_string_t input_string);
+void app_cli__process_input(app_cli_s *cli, app_cli__argument_t cli_argument,
+                            sl_string_t input_string);
 
 #ifdef __cplusplus
 } /* extern "C" */
