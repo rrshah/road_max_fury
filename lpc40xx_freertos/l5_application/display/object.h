@@ -5,8 +5,14 @@
 enum move { DOWN = 0, DOWN_AND_LEFT_RIGHT = 1 };
 enum direction { RIGHT = 0, LEFT = 1 };
 
+typedef struct {
+  uint8_t level_obstacle_mod;
+  uint8_t num_of_obstacles;
+} level_t;
+
 typedef struct b {
-  uint8_t x, y;
+  uint8_t x;
+  int8_t y;
   const uint8_t *image; // ptr->image
   bool isAlive;
   uint8_t color;
@@ -22,5 +28,5 @@ void move_car_left();
 void move_car_right();
 void draw();
 void move();
+void generate_random_obstacles();
 void object__init_player_car(void);
-void draw_player_car();

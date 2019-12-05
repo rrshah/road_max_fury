@@ -32,7 +32,8 @@ static uint8_t row_to_display = 15;
 
 bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   uint8_t mask = 7;
-  if ((y < 0) || (y >= 64) || (x < 0) || (x >= 32)) {
+  if ((y < 0) || (y >= LED_MATRIX_HEIGHT) || (x < 0) ||
+      (x >= LED_MATRIX_WIDTH)) {
     return false;
   }
 

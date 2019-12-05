@@ -12,45 +12,13 @@
 
 void display_task(void *params) {
   object__init_player_car();
-  printf("Display task Entered\n");
+  generate_random_obstacles();
+
   while (true) {
-    // led_matrix__turnOffAllPixels();
     move();
     draw();
 
     vTaskDelay(30);
-  }
-}
-
-void test_led_matrix_task(void *params) {
-
-  led_matrix__turnOnAllPixels(BLUE);
-  led_matrix__drawPixel(0, 0, BLUE);
-  led_matrix__drawPixel(5, 1, BLUE);
-
-  led_matrix__drawPixel(21, 21, BLUE);
-  led_matrix__drawPixel(25, 43, BLUE);
-  led_matrix__drawPixel(20, 20, BLUE);
-
-  led_matrix__drawPixel(31, 0, BLUE);
-  led_matrix__drawPixel(31, 31, BLUE);
-  led_matrix__drawPixel(31, 63, BLUE);
-
-  // led_matrix__updateDisplay();
-
-  while (true) {
-
-    led_matrix__turnOnAllPixels(BLUE);
-    printf("LED ON..\n");
-    // led_matrix__updateDisplay();
-
-    vTaskDelay(1);
-
-    led_matrix__turnOffAllPixels();
-    printf("LED OFF..\n");
-    // led_matrix__updateDisplay();
-
-    vTaskDelay(100);
   }
 }
 
