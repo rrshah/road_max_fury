@@ -13,18 +13,15 @@
 
 extern const uint8_t car[];
 static uint8_t current_level = 1;
-static num_of_on_screen_obstacles = 0;
+static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
-
 static level_t levels[] = {{
     .level_obstacle_mod = 1,
     .num_of_obstacles = 3,
 }};
 
-bitmap_object obstacle_types[] = {{.x = 10,
-                                   .y = BORDER_HEIGHT - CAR_HEIGHT_WITH_PADDING,
-                                   .color = RED,
+bitmap_object obstacle_types[] = {{.color = RED,
                                    .image = car,
                                    .movement_type = DOWN,
                                    .height = CAR_HEIGHT_WITH_PADDING,
@@ -32,9 +29,7 @@ bitmap_object obstacle_types[] = {{.x = 10,
                                    .speed = 20,
                                    .counter = 0,
                                    .isAlive = true},
-                                  {.x = 20,
-                                   .y = BORDER_HEIGHT - CAR_HEIGHT_WITH_PADDING,
-                                   .color = YELLOW,
+                                  {.color = YELLOW,
                                    .image = car,
                                    .movement_type = DOWN_AND_LEFT_RIGHT,
                                    .height = CAR_HEIGHT_WITH_PADDING,
@@ -87,6 +82,7 @@ static void move_obstacles(bitmap_object *obstacle) {
 
   if (obstacle->y == (-1) * CAR_HEIGHT_WITH_PADDING) {
     obstacle->isAlive = false;
+    num_of_on_screen_obstacles--;
   }
 }
 
@@ -158,9 +154,19 @@ static void generate_obstacle(bitmap_object *obstacle) {
 }
 
 void generate_random_obstacles() {
-  // if (num_of_on_screen_obstacles < levels[current_level-1].num_of_obstacles)
-  // {
-  for (uint8_t i = 0; i < 3; i++) {
-    generate_obstacle(&car_obstacle[i]);
+  static int counter = 0;
+  counter++;
+  if (counter < 20)
+    return;
+  if (num_of_on_screen_obstacles < levels[current_level - 1].num_of_obstacles) {
+    for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+      if (!car_obstacle[i].isAlive) {
+        generate_obstacle(&car_obstacle[i]);
+        break;
+      }
+    }
+
+    num_of_on_screen_obstacles++;
   }
+  counter = 0;
 }

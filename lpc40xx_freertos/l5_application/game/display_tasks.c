@@ -12,9 +12,9 @@
 
 void display_task(void *params) {
   object__init_player_car();
-  generate_random_obstacles();
 
   while (true) {
+    generate_random_obstacles();
     move();
     draw();
 
