@@ -100,7 +100,7 @@ static void accelerometer_task(void *params) {
     default:
       break;
     }
-    vTaskDelay(100);
+    vTaskDelay(50);
   }
 }
 

@@ -16,6 +16,7 @@ static void draw_game_screen() {
   generate_random_obstacles();
   move();
   draw();
+  collision_detector();
 }
 
 void display_task(void *params) {
@@ -30,6 +31,9 @@ void display_task(void *params) {
       break;
     case GAME_SCREEN:
       draw_game_screen();
+      break;
+    case CAR_CRASH:
+      // led_matrix__turnOnAllPixels(RED);
       break;
     }
 

@@ -106,18 +106,18 @@ static void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
 void draw_score() {
   uint8_t hundred, ten, unit;
 
-  drawBitmap(0, 59, score_letter_S, 3, 5, YELLOW);
-  drawBitmap(4, 59, score_letter_C, 3, 5, YELLOW);
-  drawBitmap(8, 59, score_letter_O, 3, 5, YELLOW);
-  drawBitmap(12, 59, score_letter_R, 3, 5, YELLOW);
-  drawBitmap(16, 59, score_letter_E, 3, 5, YELLOW);
+  drawBitmap(0, 59, score_letter_S, 3, 5, MAGENTA);
+  drawBitmap(4, 59, score_letter_C, 3, 5, MAGENTA);
+  drawBitmap(8, 59, score_letter_O, 3, 5, MAGENTA);
+  drawBitmap(12, 59, score_letter_R, 3, 5, MAGENTA);
+  drawBitmap(16, 59, score_letter_E, 3, 5, MAGENTA);
 
-  drawBitmap(19, 59, score_colon, 1, 5, RED);
+  drawBitmap(19, 59, score_colon, 1, 5, BLUE);
 
   get_score(&hundred, &ten, &unit);
-  drawBitmap(21, 59, number[hundred], 3, 5, MAGENTA);
+  drawBitmap(21, 59, number[hundred], 3, 5, CYAN);
   drawBitmap(25, 59, number[ten], 3, 5, CYAN);
-  drawBitmap(29, 59, number[unit], 3, 5, YELLOW);
+  drawBitmap(29, 59, number[unit], 3, 5, CYAN);
 }
 
 void object__init_player_car(void) {
@@ -272,4 +272,37 @@ void draw_start_screen() {
   vTaskDelay(5000);
   led_matrix__turnOffAllPixels();
   game_screen_state = GAME_SCREEN;
+}
+
+static bool check_collision(const bitmap_object obstacle) {
+  bool check_y = false;
+  if (((obstacle.x + 1) >= player_car.x + 1) &&
+      ((obstacle.x + 1) <= (player_car.x + CAR_WIDTH))) {
+    check_y = true;
+  } else if (((obstacle.x + CAR_WIDTH) >= (player_car.x + 1)) &&
+             ((obstacle.x + CAR_WIDTH) <= (player_car.x + CAR_WIDTH))) {
+    check_y = true;
+  }
+
+  if (!check_y) {
+    return false;
+  }
+
+  if (((obstacle.y >= player_car.y) &&
+       (obstacle.y <= (player_car.y + CAR_HEIGHT - 1))) ||
+      (((obstacle.y + CAR_HEIGHT - 1) >= player_car.y) &&
+       ((obstacle.y + CAR_HEIGHT - 1) <= (player_car.y + CAR_HEIGHT - 1)))) {
+    return true;
+  }
+  return false;
+}
+
+void collision_detector() {
+  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+    if (car_obstacle[i].isAlive) {
+      if (check_collision(car_obstacle[i])) {
+        game_screen_state = CAR_CRASH;
+      }
+    }
+  }
 }
