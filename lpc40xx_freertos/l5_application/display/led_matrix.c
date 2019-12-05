@@ -45,7 +45,6 @@ bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   if ((y < 0) || (y >= 64) || (x < 0) || (x >= 32)) {
     return false;
   }
-
   if (x < 16) {
     led_matrix_buffer[x][y] = color;
   } else {

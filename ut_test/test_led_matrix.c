@@ -93,7 +93,16 @@ void test_led_matrix_draw_Pixel_packing_the_buffer_at_16_0(void)
 void test_led_matrix_draw_Pixel_at_0_0_16_0(void) {
   led_matrix__drawPixel(0, 0, WHITE);
   led_matrix__drawPixel(16, 0, RED);
+  //00RGBRGB
   TEST_ASSERT_EQUAL_HEX8(0b00100111, led_matrix_buffer[0][0]);
+}
+
+void test_led_matrix_draw_Pixel_at_0_0_16_0_black(void) {
+  led_matrix__drawPixel(0, 0, WHITE);
+  led_matrix__drawPixel(16, 0, RED);
+  led_matrix__drawPixel(0, 0, BLACK);
+  // 00RGBRGB
+  TEST_ASSERT_EQUAL_HEX8(0b00100000, led_matrix_buffer[0][0]);
 }
 
 // void test_led_matrix_draw_Pixel_packing_the_buffer_at_5_4(void)
