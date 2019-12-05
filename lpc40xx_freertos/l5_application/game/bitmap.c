@@ -1,6 +1,7 @@
 #include <stdint.h>
 
-const uint8_t car[] = {0x60, 0xF0, 0x60, 0xF0, 0x60};
+
+//const uint8_t car[] = {0x60, 0xF0, 0x60, 0xF0, 0x60};
 
 
 const uint8_t letter_R[] = {0x84, 0x88, 0x90, 0xA0, 0xC0,
@@ -83,3 +84,5 @@ void draw_score_screen() {
   drawBitmap(25, 59, number_9, 3, 5, CYAN);
   drawBitmap(29, 59, number_9, 3, 5, YELLOW);
 }
+const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
+//>>>>>>> b2d133d7c12e879de590cef8e16d40818791dbbf

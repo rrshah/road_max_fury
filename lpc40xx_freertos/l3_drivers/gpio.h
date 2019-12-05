@@ -43,14 +43,18 @@ typedef struct {
  * @param pin_number_0_to_31 The pin number from 0-31
  */
 gpio_s gpio__construct(gpio__port_e port, uint8_t pin_number_0_to_31);
-gpio_s gpio__construct_as_input(gpio__port_e port,
-                                uint8_t pin_number_0_to_31); ///< construct then set as input
-gpio_s gpio__construct_as_output(gpio__port_e port,
-                                 uint8_t pin_number_0_to_31); ///< construct then set as output
+gpio_s gpio__construct_as_input(
+    gpio__port_e port,
+    uint8_t pin_number_0_to_31); ///< construct then set as input
+gpio_s gpio__construct_as_output(
+    gpio__port_e port,
+    uint8_t pin_number_0_to_31); ///< construct then set as output
 
 /// Construct and then set the pin function. In this case, DIR will not impact
 /// the pin
-gpio_s gpio__construct_with_function(gpio__port_e port, uint8_t pin_number_0_to_31, gpio__function_e function);
+gpio_s gpio__construct_with_function(gpio__port_e port,
+                                     uint8_t pin_number_0_to_31,
+                                     gpio__function_e function);
 
 /// Sets the function for a pin; @see gpio__function_e
 void gpio__set_function(gpio_s gpio, gpio__function_e function);

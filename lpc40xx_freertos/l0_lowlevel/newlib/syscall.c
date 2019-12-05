@@ -40,7 +40,8 @@ static void *sbrk_ram1(size_t requested_byte_count) {
    *   2. We do not want to increment next_free_heap and go out of bounds to
    * wrap
    */
-  if (!((next_free_heap >= (void *)&_heap_start) && (next_free_heap < (void *)&_heap_end))) {
+  if (!((next_free_heap >= (void *)&_heap_start) &&
+        (next_free_heap < (void *)&_heap_end))) {
     memory_to_return = NULL;
     next_free_heap -= requested_byte_count;
   }
@@ -56,7 +57,8 @@ static void *sbrk_ram2(size_t requested_byte_count) {
   void *memory_to_return = next_free_heap;
   next_free_heap += requested_byte_count;
 
-  if (!((next_free_heap >= (void *)&__start_of_unused_ram64) && (next_free_heap < (void *)&__end_of_unused_ram64))) {
+  if (!((next_free_heap >= (void *)&__start_of_unused_ram64) &&
+        (next_free_heap < (void *)&__end_of_unused_ram64))) {
     memory_to_return = NULL;
     next_free_heap -= requested_byte_count;
   }

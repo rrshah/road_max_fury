@@ -34,7 +34,8 @@ typedef enum {
  * @note The isr_callback may be NULL if the timer will not be configured for
  * any match interrupts
  */
-void hw_timer__enable(lpc_timer_e timer, const uint32_t prescalar_divider, function__void_f isr_callback);
+void hw_timer__enable(lpc_timer_e timer, const uint32_t prescalar_divider,
+                      function__void_f isr_callback);
 
 /**
  * When the HW timer counts up and matches the mr_value of type lpc_timer__mr_e
@@ -45,11 +46,13 @@ void hw_timer__enable(lpc_timer_e timer, const uint32_t prescalar_divider, funct
  * @note All match registers use the same interrupt registered through
  * hw_timer__enable()
  */
-void hw_timer__enable_match_isr(lpc_timer_e timer, lpc_timer__mr_e mr_type, const uint32_t mr_value);
+void hw_timer__enable_match_isr(lpc_timer_e timer, lpc_timer__mr_e mr_type,
+                                const uint32_t mr_value);
 
 /// When isr_callback fires that was set by hw_timer__enable(), then this should
 /// be used to clear the MR interrupt
-void hw_timer__acknowledge_interrupt(lpc_timer_e timer, lpc_timer__mr_e mr_type);
+void hw_timer__acknowledge_interrupt(lpc_timer_e timer,
+                                     lpc_timer__mr_e mr_type);
 
 /// @returns the HW timer value
 uint32_t hw_timer__get_value(lpc_timer_e timer);

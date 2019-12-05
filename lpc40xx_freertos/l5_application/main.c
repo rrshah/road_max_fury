@@ -43,18 +43,23 @@ int main(void) {
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
-  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
-  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
-  // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
-  // xTaskCreate(test_graphics_task, "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
+              PRIORITY_LOW, NULL);
+  // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)),
+  // NULL, PRIORITY_LOW, NULL); xTaskCreate(test_graphics_task,
+  // "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
   xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
-  // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(play_audio_test, "play_audio_test", 4096 / sizeof(void *),
+  // NULL, PRIORITY_LOW, NULL);
 
-  xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *), NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(mp3_player_task, "mp3_player_task", 4096 / sizeof(void *),
+  // NULL, PRIORITY_LOW, NULL);
 
   sj2_cli__init();
 
@@ -75,21 +80,21 @@ static void accelerometer_task(void *params) {
 
     switch (y) {
     case 0 ... 150:
-      printf("Go straight, y value=%lu\n", y);
+      // printf("Go straight, y value=%lu\n", y);
       break;
 
     case 151 ... 800:
       move_car_right();
-      printf("Go slight right, y value=%lu\n", y);
+      // printf("Go slight right, y value=%lu\n", y);
       break;
 
     case 3100 ... 3944:
       move_car_left();
-      printf("Go extreme left, y value=%lu\n", y);
+      // printf("Go extreme left, y value=%lu\n", y);
       break;
 
     case 3945 ... 4095:
-      printf("Go straight, y value=%lu\n", y);
+      // printf("Go straight, y value=%lu\n", y);
       break;
 
     default:
@@ -125,8 +130,10 @@ static void uart3_init(void) {
 
   // Make UART more efficient by backing it with RTOS queues (optional but
   // highly recommended with RTOS)
-  QueueHandle_t rxq_handle = xQueueCreateStatic(sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
-  QueueHandle_t txq_handle = xQueueCreateStatic(sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
+  QueueHandle_t rxq_handle = xQueueCreateStatic(
+      sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
+  QueueHandle_t txq_handle = xQueueCreateStatic(
+      sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
 
   uart__enable_queues(UART__3, txq_handle, rxq_handle);
 

@@ -11,48 +11,20 @@
 #include "object.h"
 
 void display_task(void *params) {
+  object__init_player_car();
+
   while (true) {
-    led_matrix__turnOffAllPixels();
+    generate_random_obstacles();
     move();
     draw();
-    vTaskDelay(200);
-  }
-}
 
-void test_led_matrix_task(void *params) {
-
-  led_matrix__turnOnAllPixels(BLUE);
-  led_matrix__drawPixel(0, 0, BLUE);
-  led_matrix__drawPixel(5, 1, BLUE);
-
-  led_matrix__drawPixel(21, 21, BLUE);
-  led_matrix__drawPixel(25, 43, BLUE);
-  led_matrix__drawPixel(20, 20, BLUE);
-
-  led_matrix__drawPixel(31, 0, BLUE);
-  led_matrix__drawPixel(31, 31, BLUE);
-  led_matrix__drawPixel(31, 63, BLUE);
-
-  // led_matrix__updateDisplay();
-
-  while (true) {
-
-    led_matrix__turnOnAllPixels(BLUE);
-    printf("LED ON..\n");
-    // led_matrix__updateDisplay();
-
-    vTaskDelay(1);
-
-    led_matrix__turnOffAllPixels();
-    printf("LED OFF..\n");
-    // led_matrix__updateDisplay();
-
-    vTaskDelay(100);
+    vTaskDelay(30);
   }
 }
 
 // smiley
-static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
+static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
+                                 0xa5, 0x81, 0x42, 0x3c};
 
 void test_graphics_task(void *params) {
 

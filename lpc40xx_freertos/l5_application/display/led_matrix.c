@@ -31,27 +31,34 @@ uint8_t led_matrix_buffer[16][64] = {0};
 static uint8_t row_to_display = 15;
 
 bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
-  if ((y < 0) || (y >= 64) || (x < 0) || (x >= 32)) {
+  uint8_t mask = 7;
+  if ((y < 0) || (y >= LED_MATRIX_HEIGHT) || (x < 0) ||
+      (x >= LED_MATRIX_WIDTH)) {
     return false;
   }
 
   if (x < 16) {
+    led_matrix_buffer[x][y] &= ~mask;
     led_matrix_buffer[x][y] |= color;
   } else {
+    led_matrix_buffer[x - 16][y] &= ~(mask << 3);
     led_matrix_buffer[x - 16][y] |= (color << 3);
   }
   return true;
 }
 
-void drawPixel(int16_t x, int16_t y, uint16_t c) { led_matrix__drawPixel(x, y, c); }
+void drawPixel(int16_t x, int16_t y, uint16_t c) {
+  led_matrix__drawPixel(x, y, c);
+}
 
 void led_matrix__turnOnAllPixels(uint16_t color) {
   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
-    memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color), LED_MATRIX_COLUMNS);
+    memset(led_matrix_buffer[i], (uint8_t)((color << 3) | color),
+           LED_MATRIX_COLUMNS);
   }
 }
 void led_matrix__turnOffAllPixels() {
-  memset(led_matrix_buffer, 0, LED_MATRIX_HEIGHT * LED_MATRIX_WIDTH);
+  memset(led_matrix_buffer, 0, 16 * LED_MATRIX_WIDTH);
   //   for (int i = 0; i < LED_MATRIX_ROWS; i++) {
   //     memset(led_matrix_buffer[i], 0, LED_MATRIX_COLUMNS);
   //   }
@@ -129,17 +136,21 @@ For each row of pixels, we repeat the following cycle of steps:
 static void led_matrix__updateDisplay_isr() {
   led_matrix__updateDisplay();
   hw_timer__set_value(led_matrix__refresh_timer, 0);
-  hw_timer__acknowledge_interrupt(led_matrix__refresh_timer, led_matrix__refresh_timer_mr);
+  hw_timer__acknowledge_interrupt(led_matrix__refresh_timer,
+                                  led_matrix__refresh_timer_mr);
 }
 
 static void led_matrix__refresh_timer_init() {
   const uint32_t sys_time__us_per_sec = UINT32_C(1) * 1000 * 1000;
-  const uint32_t prescalar_for_1us = (clock__get_peripheral_clock_hz() / sys_time__us_per_sec) - 1;
+  const uint32_t prescalar_for_1us =
+      (clock__get_peripheral_clock_hz() / sys_time__us_per_sec) - 1;
   const uint32_t one_ms_in_us = 1000;
 
   // Enable the timer with 1uS resolution with an interrupt
-  hw_timer__enable(led_matrix__refresh_timer, prescalar_for_1us, led_matrix__updateDisplay_isr);
-  hw_timer__enable_match_isr(led_matrix__refresh_timer, led_matrix__refresh_timer_mr, one_ms_in_us);
+  hw_timer__enable(led_matrix__refresh_timer, prescalar_for_1us,
+                   led_matrix__updateDisplay_isr);
+  hw_timer__enable_match_isr(led_matrix__refresh_timer,
+                             led_matrix__refresh_timer_mr, one_ms_in_us);
 }
 
 void led_matrix__setupLedMatrixPins(void) {
