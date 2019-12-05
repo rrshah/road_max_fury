@@ -1,7 +1,11 @@
-#include "object.h"
-#include "graphics.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "FreeRTOS.h"
+#include "graphics.h"
+#include "object.h"
+#include "task.h"
 
 #define BORDER_HEIGHT (52)
 #define BORDER_WIDTH (2)
@@ -10,8 +14,54 @@
 #define CAR_HEIGHT_WITH_PADDING (6)
 #define CAR_WIDTH_WITH_PADDING (6)
 #define NUM_OF_OBSTACLES (10)
+#define SCORE_PER_CAR (1)
 
-extern const uint8_t car[];
+const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
+
+const uint8_t letter_R[] = {0x84, 0x88, 0x90, 0xA0, 0xC0,
+                            0xFC, 0x84, 0x84, 0x84, 0xFC};
+const uint8_t letter_O[] = {0x78, 0x84, 0x84, 0x84, 0x84,
+                            0x84, 0x84, 0x84, 0x84, 0x78};
+const uint8_t letter_A[] = {0x84, 0x84, 0x84, 0x84, 0x84,
+                            0xFC, 0x84, 0x84, 0x84, 0x78};
+const uint8_t letter_D[] = {0xF0, 0x88, 0x84, 0x84, 0x84,
+                            0x84, 0x84, 0x84, 0x88, 0xF0};
+const uint8_t letter_M[] = {0x84, 0x84, 0x84, 0x84, 0x84,
+                            0xB4, 0xB4, 0xB4, 0xCC, 0x84};
+const uint8_t letter_X[] = {0x84, 0x84, 0x84, 0x48, 0x30,
+                            0x30, 0x48, 0x84, 0x84, 0x84};
+const uint8_t letter_F[] = {0x80, 0x80, 0x80, 0x80, 0x80,
+                            0xFC, 0x80, 0x80, 0x80, 0xFC};
+const uint8_t letter_U[] = {0x78, 0x84, 0x84, 0x84, 0x84,
+                            0x84, 0x84, 0x84, 0x84, 0x84};
+const uint8_t letter_Y[] = {0x30, 0x30, 0x30, 0x30, 0x30,
+                            0x30, 0x48, 0x84, 0x84, 0x84};
+
+const uint8_t letter_smallP[] = {0x80, 0x80, 0xF8, 0x88, 0xF8};
+const uint8_t letter_smallL[] = {0xF8, 0x80, 0x80, 0x80, 0x80};
+const uint8_t letter_smallA[] = {0x88, 0x88, 0xF8, 0x88, 0X70};
+const uint8_t letter_smallY[] = {0x20, 0x20, 0x20, 0x50, 0x88};
+
+const uint8_t score_letter_S[] = {0xE0, 0x20, 0xE0, 0x80, 0xE0};
+const uint8_t score_letter_C[] = {0xE0, 0x80, 0x80, 0x80, 0xE0};
+const uint8_t score_letter_O[] = {0xE0, 0xA0, 0xA0, 0xA0, 0xE0};
+const uint8_t score_letter_R[] = {0xA0, 0xC0, 0xE0, 0xA0, 0xE0};
+const uint8_t score_letter_E[] = {0xE0, 0x80, 0xC0, 0x80, 0xE0};
+
+const uint8_t score_colon[] = {0x00, 0x80, 0x00, 0x80, 0x00};
+
+const uint8_t number[][5] = {
+    {0xE0, 0xA0, 0xA0, 0xA0, 0xE0}, {0xE0, 0x40, 0x40, 0xC0, 0x40},
+    {0xE0, 0x80, 0xE0, 0x20, 0xE0}, {0xE0, 0x20, 0x60, 0x20, 0xE0},
+    {0x40, 0xE0, 0xC0, 0x80, 0x80}, {0xE0, 0x20, 0xE0, 0x80, 0xE0},
+    {0xE0, 0Xa0, 0xE0, 0x80, 0XE0}, {0x20, 0x20, 0x20, 0x20, 0xE0},
+    {0xE0, 0xA0, 0xE0, 0xA0, 0xE0}, {0xE0, 0x20, 0xE0, 0xA0, 0xE0}};
+
+const uint8_t play_button[] = {0xC0, 0xE0, 0xF1, 0xE0, 0xC0};
+
+static uint16_t score = 0;
+uint8_t game_screen_state = START_SCREEN;
+
 static uint8_t current_level = 1;
 static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
@@ -19,6 +69,7 @@ static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
 static level_t levels[] = {{
     .level_obstacle_mod = 1,
     .num_of_obstacles = 3,
+    .score_multiplier = 5,
 }};
 
 bitmap_object obstacle_types[] = {{.color = RED,
@@ -41,6 +92,32 @@ bitmap_object obstacle_types[] = {{.color = RED,
 void object__draw(bitmap_object object) {
   drawBitmap(object.x, object.y, object.image, object.width, object.height,
              object.color);
+}
+
+static void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
+  uint16_t temp_score = score;
+  *unit = temp_score % 10;
+  temp_score /= 10;
+  *ten = temp_score % 10;
+  temp_score /= 10;
+  *hundred = temp_score % 10;
+}
+
+void draw_score() {
+  uint8_t hundred, ten, unit;
+
+  drawBitmap(0, 59, score_letter_S, 3, 5, YELLOW);
+  drawBitmap(4, 59, score_letter_C, 3, 5, YELLOW);
+  drawBitmap(8, 59, score_letter_O, 3, 5, YELLOW);
+  drawBitmap(12, 59, score_letter_R, 3, 5, YELLOW);
+  drawBitmap(16, 59, score_letter_E, 3, 5, YELLOW);
+
+  drawBitmap(19, 59, score_colon, 1, 5, RED);
+
+  get_score(&hundred, &ten, &unit);
+  drawBitmap(21, 59, number[hundred], 3, 5, MAGENTA);
+  drawBitmap(25, 59, number[ten], 3, 5, CYAN);
+  drawBitmap(29, 59, number[unit], 3, 5, YELLOW);
 }
 
 void object__init_player_car(void) {
@@ -82,6 +159,7 @@ static void move_obstacles(bitmap_object *obstacle) {
 
   if (obstacle->y == (-1) * CAR_HEIGHT_WITH_PADDING) {
     obstacle->isAlive = false;
+    score += levels[current_level - 1].score_multiplier * SCORE_PER_CAR;
     num_of_on_screen_obstacles--;
   }
 }
@@ -125,6 +203,7 @@ void draw() {
   draw_player_car();
   draw_borders();
   draw_obstacles();
+  draw_score();
 }
 
 static void generate_obstacle(bitmap_object *obstacle) {
@@ -169,4 +248,28 @@ void generate_random_obstacles() {
     num_of_on_screen_obstacles++;
   }
   counter = 0;
+}
+
+void draw_start_screen() {
+  drawBitmap(1, 48, letter_R, 6, 10, RED);
+  drawBitmap(9, 48, letter_O, 6, 10, RED);
+  drawBitmap(17, 48, letter_A, 6, 10, RED);
+  drawBitmap(25, 48, letter_D, 6, 10, RED);
+  drawBitmap(5, 35, letter_M, 6, 10, RED);
+  drawBitmap(13, 35, letter_A, 6, 10, RED);
+  drawBitmap(21, 35, letter_X, 6, 10, RED);
+  drawBitmap(1, 22, letter_F, 6, 10, RED);
+  drawBitmap(9, 22, letter_U, 6, 10, RED);
+  drawBitmap(17, 22, letter_R, 6, 10, RED);
+  drawBitmap(25, 22, letter_Y, 6, 10, RED);
+
+  drawBitmap(2, 13, letter_smallP, 5, 5, BLUE);
+  drawBitmap(8, 13, letter_smallL, 5, 5, BLUE);
+  drawBitmap(14, 13, letter_smallA, 5, 5, BLUE);
+  drawBitmap(20, 13, letter_smallY, 5, 5, BLUE);
+
+  drawBitmap(26, 13, play_button, 4, 5, GREEN);
+  vTaskDelay(5000);
+  led_matrix__turnOffAllPixels();
+  game_screen_state = GAME_SCREEN;
 }

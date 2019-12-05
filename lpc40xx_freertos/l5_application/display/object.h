@@ -4,10 +4,12 @@
 
 enum move { DOWN = 0, DOWN_AND_LEFT_RIGHT = 1 };
 enum direction { RIGHT = 0, LEFT = 1 };
+enum screen_state { START_SCREEN = 0, GAME_SCREEN = 1 };
 
 typedef struct {
   uint8_t level_obstacle_mod;
   uint8_t num_of_obstacles;
+  uint8_t score_multiplier;
 } level_t;
 
 typedef struct b {
@@ -30,3 +32,4 @@ void draw();
 void move();
 void generate_random_obstacles();
 void object__init_player_car(void);
+void draw_start_screen();

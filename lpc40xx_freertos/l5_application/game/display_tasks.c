@@ -10,13 +10,28 @@
 #include "led_matrix.h"
 #include "object.h"
 
+extern uint8_t game_screen_state;
+
+static void draw_game_screen() {
+  generate_random_obstacles();
+  move();
+  draw();
+}
+
 void display_task(void *params) {
+
   object__init_player_car();
+  game_screen_state = START_SCREEN;
 
   while (true) {
-    generate_random_obstacles();
-    move();
-    draw();
+    switch (game_screen_state) {
+    case START_SCREEN:
+      draw_start_screen();
+      break;
+    case GAME_SCREEN:
+      draw_game_screen();
+      break;
+    }
 
     vTaskDelay(30);
   }
