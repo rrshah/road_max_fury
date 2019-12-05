@@ -67,12 +67,12 @@ static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
 static level_t levels[] = {{
-    .level_obstacle_mod = 1,
+    .level_obstacle_mod = 2,
     .num_of_obstacles = 3,
     .score_multiplier = 5,
 }};
 
-bitmap_object obstacle_types[] = {{.color = RED,
+bitmap_object obstacle_types[] = {{.color = MAGENTA,
                                    .image = car,
                                    .movement_type = DOWN,
                                    .height = CAR_HEIGHT_WITH_PADDING,
@@ -80,7 +80,7 @@ bitmap_object obstacle_types[] = {{.color = RED,
                                    .speed = 20,
                                    .counter = 0,
                                    .isAlive = true},
-                                  {.color = YELLOW,
+                                  {.color = GREEN,
                                    .image = car,
                                    .movement_type = DOWN_AND_LEFT_RIGHT,
                                    .height = CAR_HEIGHT_WITH_PADDING,
@@ -106,11 +106,11 @@ static void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
 void draw_score() {
   uint8_t hundred, ten, unit;
 
-  drawBitmap(0, 59, score_letter_S, 3, 5, MAGENTA);
-  drawBitmap(4, 59, score_letter_C, 3, 5, MAGENTA);
-  drawBitmap(8, 59, score_letter_O, 3, 5, MAGENTA);
-  drawBitmap(12, 59, score_letter_R, 3, 5, MAGENTA);
-  drawBitmap(16, 59, score_letter_E, 3, 5, MAGENTA);
+  drawBitmap(0, 59, score_letter_S, 3, 5, BLUE);
+  drawBitmap(4, 59, score_letter_C, 3, 5, BLUE);
+  drawBitmap(8, 59, score_letter_O, 3, 5, BLUE);
+  drawBitmap(12, 59, score_letter_R, 3, 5, BLUE);
+  drawBitmap(16, 59, score_letter_E, 3, 5, BLUE);
 
   drawBitmap(19, 59, score_colon, 1, 5, BLUE);
 
@@ -173,8 +173,8 @@ void move() {
 }
 
 static void draw_borders() {
-  fillRect(0, 0, BORDER_WIDTH, BORDER_HEIGHT, GREEN);
-  fillRect(30, 0, BORDER_WIDTH, BORDER_HEIGHT, GREEN);
+  fillRect(0, 0, BORDER_WIDTH, BORDER_HEIGHT, YELLOW);
+  fillRect(30, 0, BORDER_WIDTH, BORDER_HEIGHT, YELLOW);
   drawLine(0, BORDER_HEIGHT, 31, BORDER_HEIGHT, WHITE);
 }
 
@@ -305,4 +305,18 @@ void collision_detector() {
       }
     }
   }
+}
+
+const uint8_t crash_screen_B[] = {0xF0, 0X88, 0xF0, 0x88, 0xF0};
+const uint8_t crash_screen_O[] = {0x70, 0x88, 0x88, 0x88, 0x70};
+const uint8_t crash_screen_M[] = {0x88, 0x88, 0xA8, 0xD8, 0x88};
+const uint8_t crash_screen_exclaimation[] = {0xC0, 0x00, 0xC0, 0xC0, 0xC0};
+
+void draw_crash_screen() {
+  drawBitmap(3, 22, crash_screen_B, 5, 5, RED);
+  drawBitmap(9, 22, crash_screen_O, 5, 5, RED);
+  drawBitmap(15, 22, crash_screen_O, 5, 5, RED);
+  drawBitmap(21, 22, crash_screen_M, 5, 5, RED);
+  drawBitmap(27, 22, crash_screen_exclaimation, 2, 5, RED);
+  draw_borders();
 }

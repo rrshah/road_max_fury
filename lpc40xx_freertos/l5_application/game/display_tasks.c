@@ -33,7 +33,7 @@ void display_task(void *params) {
       draw_game_screen();
       break;
     case CAR_CRASH:
-      // led_matrix__turnOnAllPixels(RED);
+      draw_crash_screen();
       break;
     }
 
