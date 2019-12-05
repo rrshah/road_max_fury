@@ -5,6 +5,8 @@ python nxp-programmer/flash.py
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -34,7 +36,7 @@ QueueHandle_t MP3_decoder_queue;
 static gpio_s led0, led1;
 
 int main(void) {
-
+  srand(time(NULL));
   led_matrix__setupLedMatrixPins();
   led_matrix__setDefaultPinStates();
 
