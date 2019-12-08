@@ -20,6 +20,7 @@ python nxp-programmer/flash.py
 #include "sj2_cli.h"
 #include "uart.h"
 
+#include "button_task.h"
 #include "display_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
@@ -32,6 +33,7 @@ static void uart3_init(void);
 void draw_car_task(void *params);
 
 QueueHandle_t MP3_decoder_queue;
+extern SemaphoreHandle_t button_pressed_signal;
 
 static gpio_s led0, led1;
 
@@ -45,15 +47,20 @@ int main(void) {
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
-  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
-              PRIORITY_LOW, NULL);
-  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
-              PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)),
-  // NULL, PRIORITY_LOW, NULL); xTaskCreate(test_graphics_task,
-  // "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
+  // NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(test_graphics_task,"test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
+  // xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
+
+  // xTaskCreate(test_button_task, "test_button_task", 4096, NULL, PRIORITY_HIGH, NULL);
+  init_button();
+  setup_button_isr();
+
+  button_pressed_signal = xSemaphoreCreateBinary();
+  xTaskCreate(sleep_on_sem_task, "sem", (512U * 4) / sizeof(void *), NULL, PRIORITY_LOW, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
@@ -132,10 +139,8 @@ static void uart3_init(void) {
 
   // Make UART more efficient by backing it with RTOS queues (optional but
   // highly recommended with RTOS)
-  QueueHandle_t rxq_handle = xQueueCreateStatic(
-      sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
-  QueueHandle_t txq_handle = xQueueCreateStatic(
-      sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
+  QueueHandle_t rxq_handle = xQueueCreateStatic(sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
+  QueueHandle_t txq_handle = xQueueCreateStatic(sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
 
   uart__enable_queues(UART__3, txq_handle, rxq_handle);
 
