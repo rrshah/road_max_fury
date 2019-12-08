@@ -28,7 +28,6 @@ python nxp-programmer/flash.py
 
 static void blink_task(void *params);
 static void accelerometer_task(void *params);
-static void uart3_init(void);
 
 static gpio_s led0, led1;
 

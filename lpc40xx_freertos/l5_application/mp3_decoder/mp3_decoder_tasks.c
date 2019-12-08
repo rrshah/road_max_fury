@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "mp3_decoder_tasks.h"
-//#include "semphr.h"
+#include "FreeRTOS.h"
 #include "gpio.h"
+#include "mp3_decoder_tasks.h"
+#include "semphr.h"
 #include "uart.h"
 
 #define MP3_COMMAND_SIZE (8)
@@ -16,6 +17,13 @@ enum sounds {
   PLAY = 4,
   NO_SOUND = 5
 };
+
+SemaphoreHandle_t countdown;
+SemaphoreHandle_t crash;
+SemaphoreHandle_t level;
+SemaphoreHandle_t car_moving;
+SemaphoreHandle_t play;
+SemaphoreHandle_t no_sound;
 
 uint8_t mp3_player_init[] = {0x7E, 0xFF, 0x06, 0x09, 0x00, 0x00, 0x02, 0xEF};
 uint8_t game_sounds[][MP3_COMMAND_SIZE] = {
@@ -68,11 +76,36 @@ void mp3_player_task(void *pvParameters) {
   uint8_t current_state = NO_SOUND;
 
   while (true) {
-    play_audio(CRASH);
-    /*    if (xSemaphoreReceive()) {
-        }*/
-    vTaskDelay(1000);
+    if (xSemaphoreTake(countdown, 0) && current_state != COUNTDOWN) {
+      play_audio(COUNTDOWN);
+      current_state = COUNTDOWN;
+    } else if (xSemaphoreTake(crash, 0) && current_state != CRASH) {
+      play_audio(CRASH);
+      current_state = CRASH;
+    } else if (xSemaphoreTake(car_moving, 0) && current_state != CAR) {
+      play_audio(CAR);
+      current_state = CAR;
+    } else if (xSemaphoreTake(no_sound, 0) && current_state != NO_SOUND) {
+      play_audio(NO_SOUND);
+      current_state = NO_SOUND;
+    } else if (xSemaphoreTake(level, 0) && current_state != LEVEL_CHANGE) {
+      play_audio(LEVEL_CHANGE);
+      current_state = LEVEL_CHANGE;
+    } else if (xSemaphoreTake(play, 0) && current_state != PLAY) {
+      play_audio(PLAY);
+      current_state = PLAY;
+    }
+
+    vTaskDelay(100);
   }
 }
 
-void mp3_decoder_init(void) { uart3_init(); }
+void mp3_decoder_init(void) {
+  uart3_init();
+  countdown = xSemaphoreCreateBinary();
+  crash = xSemaphoreCreateBinary();
+  level = xSemaphoreCreateBinary();
+  car_moving = xSemaphoreCreateBinary();
+  play = xSemaphoreCreateBinary();
+  no_sound = xSemaphoreCreateBinary();
+}
