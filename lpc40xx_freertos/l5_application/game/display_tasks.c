@@ -37,7 +37,7 @@ void display_task(void *params) {
       break;
     }
 
-    vTaskDelay(30);
+    vTaskDelay(50);
   }
 }
 

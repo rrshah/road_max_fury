@@ -52,8 +52,11 @@ int main(void) {
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)),
   // NULL, PRIORITY_LOW, NULL); xTaskCreate(test_graphics_task,
   // "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(accelerometer_task, "acc_task", (1024 / sizeof(void *)), NULL,
+              PRIORITY_LOW, NULL);
+  xTaskCreate(display_task, "display_task", (4096 / sizeof(void *)), NULL,
+              PRIORITY_LOW, NULL);
+  // xTaskCreate(button_input_task, "button_task", )
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 

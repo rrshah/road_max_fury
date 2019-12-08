@@ -14,7 +14,9 @@
 #define CAR_HEIGHT_WITH_PADDING (6)
 #define CAR_WIDTH_WITH_PADDING (6)
 #define NUM_OF_OBSTACLES (10)
-#define SCORE_PER_CAR (1)
+#define LEVEL_1_SCORE (30)
+#define LEVEL_2_SCORE (100)
+#define LEVEL_3_SCORE (200)
 
 const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
 
@@ -67,27 +69,55 @@ static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
 static level_t levels[] = {{
-    .level_obstacle_mod = 2,
-    .num_of_obstacles = 3,
-    .score_multiplier = 5,
-}};
+                               .level_obstacle_mod = 1,
+                               .num_of_obstacles = 3,
+                               .score_per_car = 3,
+                           },
+                           {
+                               .level_obstacle_mod = 3,
+                               .num_of_obstacles = 3,
+                               .score_per_car = 5,
+                           },
+                           {
+                               .level_obstacle_mod = 4,
+                               .num_of_obstacles = 4,
+                               .score_per_car = 10,
+                           }};
 
-bitmap_object obstacle_types[] = {{.color = MAGENTA,
-                                   .image = car,
-                                   .movement_type = DOWN,
-                                   .height = CAR_HEIGHT_WITH_PADDING,
-                                   .width = CAR_WIDTH_WITH_PADDING,
-                                   .speed = 20,
-                                   .counter = 0,
-                                   .isAlive = true},
-                                  {.color = GREEN,
-                                   .image = car,
-                                   .movement_type = DOWN_AND_LEFT_RIGHT,
-                                   .height = CAR_HEIGHT_WITH_PADDING,
-                                   .width = CAR_WIDTH_WITH_PADDING,
-                                   .speed = 30,
-                                   .counter = 0,
-                                   .isAlive = true}};
+bitmap_object obstacle_types[] = {
+    {.color = MAGENTA,
+     .image = car,
+     .movement_type = DOWN,
+     .height = CAR_HEIGHT_WITH_PADDING,
+     .width = CAR_WIDTH_WITH_PADDING,
+     .speed = 20,
+     .counter = 0,
+     .isAlive = true},
+    {.color = BLUE,
+     .image = car,
+     .movement_type = DOWN,
+     .height = CAR_HEIGHT_WITH_PADDING,
+     .width = CAR_WIDTH_WITH_PADDING,
+     .speed = 10,
+     .counter = 0,
+     .isAlive = true},
+    {.color = RED,
+     .image = car,
+     .movement_type = DOWN,
+     .height = CAR_HEIGHT_WITH_PADDING,
+     .width = CAR_WIDTH_WITH_PADDING,
+     .speed = 1,
+     .counter = 0,
+     .isAlive = true},
+    {.color = GREEN,
+     .image = car,
+     .movement_type = DOWN_AND_LEFT_RIGHT,
+     .height = CAR_HEIGHT_WITH_PADDING,
+     .width = CAR_WIDTH_WITH_PADDING,
+     .speed = 30,
+     .counter = 0,
+     .isAlive = true},
+};
 
 void object__draw(bitmap_object object) {
   drawBitmap(object.x, object.y, object.image, object.width, object.height,
@@ -159,7 +189,12 @@ static void move_obstacles(bitmap_object *obstacle) {
 
   if (obstacle->y == (-1) * CAR_HEIGHT_WITH_PADDING) {
     obstacle->isAlive = false;
-    score += levels[current_level - 1].score_multiplier * SCORE_PER_CAR;
+    score += levels[current_level - 1].score_per_car;
+    if (score > LEVEL_1_SCORE && score < LEVEL_2_SCORE) {
+      current_level = 2;
+    } else if (score > LEVEL_2_SCORE) {
+      current_level = 3;
+    }
     num_of_on_screen_obstacles--;
   }
 }
