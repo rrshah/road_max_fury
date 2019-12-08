@@ -1,87 +1,78 @@
-#include "mp3_decoder_tasks.h"
-#include "uart.h"
-
-#include "queue.h"
 #include <stdio.h>
 #include <string.h>
 
-uint8_t mp3PLayer_init[] = {0x7E, 0xFF, 0x06, 0x09, 0x00, 0x00, 0x02, 0xEF};
-uint8_t car_sound[] = {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x04, 0xEF};
+#include "mp3_decoder_tasks.h"
+//#include "semphr.h"
+#include "gpio.h"
+#include "uart.h"
 
-uint8_t MP3_command_size = 8;
+#define MP3_COMMAND_SIZE (8)
 
-extern QueueHandle_t MP3_decoder_queue;
+enum sounds {
+  COUNTDOWN = 0,
+  CRASH = 1,
+  LEVEL_CHANGE = 2,
+  CAR = 3,
+  PLAY = 4,
+  NO_SOUND = 5
+};
 
-void play_audio_test(void *pvParameters) {
+uint8_t mp3_player_init[] = {0x7E, 0xFF, 0x06, 0x09, 0x00, 0x00, 0x02, 0xEF};
+uint8_t game_sounds[][MP3_COMMAND_SIZE] = {
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x01, 0xEF},
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x02, 0xEF},
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x03, 0xEF},
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x06, 0xEF},
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x09, 0xEF},
+    {0x7E, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x07, 0xEF}};
 
-  while (1) {
-    int first_song = 2;
-
-    int mp3_init = 1;
-    if (xQueueSend(MP3_decoder_queue, &mp3_init, 100)) {
-      printf("sent even numbeer%i\n", mp3_init);
-    } else {
-      printf("event sending failed\n");
-    }
-
-    if (xQueueSend(MP3_decoder_queue, &first_song, 100)) {
-      printf("first song played%i\n", first_song);
-    } else {
-      printf("first song playing failed\n");
-    }
-    printf("Mp3 decoder task is running\n");
-    vTaskDelay(2000);
-  }
-}
-
-void mp3_player_task(void *pvParameters) {
-  int event_in_game;
-  while (1) {
-    if (xQueueReceive(MP3_decoder_queue, &event_in_game, 100)) {
-      printf("event occured=%i\n", event_in_game);
-      play_audio(event_in_game);
-    } else {
-      printf("event receive failed\n");
-    }
-  }
-  vTaskDelay(100);
-}
-
-void play_audio(int event_in_game) {
-  switch (event_in_game) {
-  case 1:
-    send_mp3_command(mp3PLayer_init, MP3_command_size);
-    break;
-
-  case 2:
-    send_mp3_command(car_sound, MP3_command_size);
-    break;
-
-  default:
-    break;
-  }
-}
-
-void send_mp3_command(uint8_t command[], int size) {
+static void send_mp3_command(uint8_t command[], int size) {
   for (int i = 0; i < size; i++) {
     uart__put(UART__3, command[i], 100);
   }
 }
 
-void uart3_loopback_test(void *pvParameters) {
+static void play_audio(int event_in_game) {
+  send_mp3_command(game_sounds[event_in_game], MP3_COMMAND_SIZE);
+}
 
-  char str[] = "Loop Test\n";
-  char input_byte = '\0';
-  while (1) {
-    // Send String on UART3
-    for (int i = 0; i < strlen(str); i++) {
-      uart__put(UART__3, str[i], 100);
-    }
-    // Get same string on UART3
-    while (uart__get(UART__3, &input_byte, 10)) {
-      uart__put(UART__0, input_byte, 2);
-    }
-    // printf("Loopback is running.\n");
-    vTaskDelay(500);
+static void uart3_init(void) {
+
+  // Enable peripheral
+  uart__init(UART__3, clock__get_peripheral_clock_hz(), 9600);
+
+  // Memory for the queue data structure
+  static StaticQueue_t rxq_struct;
+  static StaticQueue_t txq_struct;
+
+  // Memory where the queue actually stores the data
+  static uint8_t rxq_storage[32];
+  static uint8_t txq_storage[128];
+
+  // Make UART more efficient by backing it with RTOS queues (optional but
+  // highly recommended with RTOS)
+  QueueHandle_t rxq_handle = xQueueCreateStatic(
+      sizeof(rxq_storage), sizeof(char), rxq_storage, &rxq_struct);
+  QueueHandle_t txq_handle = xQueueCreateStatic(
+      sizeof(txq_storage), sizeof(char), txq_storage, &txq_struct);
+
+  uart__enable_queues(UART__3, txq_handle, rxq_handle);
+
+  // Enable TX3, RX3 Pins
+  gpio__construct_with_function(0, 1, GPIO__FUNCTION_2);
+  gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
+}
+
+void mp3_player_task(void *pvParameters) {
+  send_mp3_command(mp3_player_init, MP3_COMMAND_SIZE);
+  uint8_t current_state = NO_SOUND;
+
+  while (true) {
+    play_audio(CRASH);
+    /*    if (xSemaphoreReceive()) {
+        }*/
+    vTaskDelay(1000);
   }
 }
+
+void mp3_decoder_init(void) { uart3_init(); }
