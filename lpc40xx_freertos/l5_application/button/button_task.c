@@ -15,15 +15,6 @@ static gpio_s button;
 
 void button_isr(void) { xSemaphoreGiveFromISR(button_pressed_signal, NULL); }
 
-void sleep_on_sem_task(void *p) {
-  while (1) {
-    if (xSemaphoreTake(button_pressed_signal, portMAX_DELAY)) {
-
-      printf("Button Presed\n");
-    }
-  }
-}
-
 void init_button(void) { button = gpio__construct_as_input(GPIO__PORT_0, 9); }
 
 void setup_button_isr(void) {
@@ -37,9 +28,11 @@ void test_button_task(void *params) {
 
   button_pressed_signal = xSemaphoreCreateBinary();
 
-  // xTaskCreate(sleep_on_sem_task, "sem", (512U * 4) / sizeof(void *), NULL, PRIORITY_LOW, NULL);
-
   while (1) {
+    if (xSemaphoreTake(button_pressed_signal, portMAX_DELAY)) {
+
+      printf("Button Presed\n");
+    }
     vTaskDelay(10);
   }
 }

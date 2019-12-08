@@ -55,12 +55,7 @@ int main(void) {
   // xTaskCreate(accelerometer_task, "acc_task", 2048, NULL, PRIORITY_LOW, NULL);
   // xTaskCreate(display_task, "display_task", 4096, NULL, PRIORITY_LOW, NULL);
 
-  // xTaskCreate(test_button_task, "test_button_task", 4096, NULL, PRIORITY_HIGH, NULL);
-  init_button();
-  setup_button_isr();
-
-  button_pressed_signal = xSemaphoreCreateBinary();
-  xTaskCreate(sleep_on_sem_task, "sem", (512U * 4) / sizeof(void *), NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(test_button_task, "test_button_task", 4096, NULL, PRIORITY_HIGH, NULL);
 
   MP3_decoder_queue = xQueueCreate(10, sizeof(10));
 
