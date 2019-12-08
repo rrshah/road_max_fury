@@ -45,10 +45,15 @@ bool led_matrix__drawPixel(int16_t x, int16_t y, uint16_t color) {
   if ((y < 0) || (y >= 64) || (x < 0) || (x >= 32)) {
     return false;
   }
+  uint8_t mask_clear_lower_3bits = 0b111000;
+  uint8_t mask_clear_upper_3bits = 0b000111;
+
   if (x < 16) {
-    led_matrix_buffer[x][y] = color;
+    led_matrix_buffer[x][y] &= mask_clear_lower_3bits;
+    led_matrix_buffer[x][y] |= color;
   } else {
-    led_matrix_buffer[x - 16][y] = (color << 3);
+    led_matrix_buffer[x - 16][y] &= mask_clear_upper_3bits;
+    led_matrix_buffer[x - 16][y] |= (color << 3);
   }
   return true;
 }

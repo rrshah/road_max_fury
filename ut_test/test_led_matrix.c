@@ -105,39 +105,39 @@ void test_led_matrix_draw_Pixel_at_0_0_16_0_black(void) {
   TEST_ASSERT_EQUAL_HEX8(0b00100000, led_matrix_buffer[0][0]);
 }
 
-// void test_led_matrix_draw_Pixel_packing_the_buffer_at_5_4(void)
-// {
-//     drawPixel(5, 4, cyan_3);
-//     TEST_ASSERT_EQUAL_HEX8(0X03, led_matrix_buffer[5][4]);
-// }
+void test_led_matrix_draw_Pixel_packing_the_buffer_at_5_4(void)
+{
+  led_matrix__drawPixel(5, 4, CYAN);
+  TEST_ASSERT_EQUAL_HEX8(0X03, led_matrix_buffer[5][4]);
+}
 
-// void test_led_matrix_draw_Pixel_packing_the_buffer_at_24_56(void)
-// {
-//     drawPixel(24, 56, magenta_5);
-//     TEST_ASSERT_EQUAL_HEX8(0b00101000, led_matrix_buffer[8][56]);
-// }
-// void test_led_matrix_draw_Pixel_packing_the_buffer_at_15_63(void)
-// {
-//     drawPixel(15, 63, yellow_6);
-//     TEST_ASSERT_EQUAL_HEX8(0b00000110, led_matrix_buffer[15][63]);
-// }
-// void test_led_matrix_draw_Pixel_packing_the_buffer_at_31_63(void)
-// {
-//     drawPixel(31, 63, blue_1);
-//     TEST_ASSERT_EQUAL_HEX8(0b00001000, led_matrix_buffer[15][63]);
-// }
-// void test_led_matrix_draw_Pixel_packing_the_buffer_at_15_63_and_31_63(void)
-// {
-//     drawPixel(15, 63, yellow_6);
-//     drawPixel(31, 63, blue_1);
-//     TEST_ASSERT_EQUAL_HEX8(0b0001110, led_matrix_buffer[15][63]);
-// }
+void test_led_matrix_draw_Pixel_packing_the_buffer_at_24_56(void)
+{
+  led_matrix__drawPixel(24, 56, MAGENTA);
+  TEST_ASSERT_EQUAL_HEX8(0b00101000, led_matrix_buffer[8][56]);
+}
+void test_led_matrix_draw_Pixel_packing_the_buffer_at_15_63(void)
+{
+  led_matrix__drawPixel(15, 63, YELLOW);
+  TEST_ASSERT_EQUAL_HEX8(0b00000110, led_matrix_buffer[15][63]);
+}
+void test_led_matrix_draw_Pixel_packing_the_buffer_at_31_63(void)
+{
+  led_matrix__drawPixel(31, 63, BLUE);
+  TEST_ASSERT_EQUAL_HEX8(0b00001000, led_matrix_buffer[15][63]);
+}
+void test_led_matrix_draw_Pixel_packing_the_buffer_at_15_63_and_31_63(void)
+{
+  led_matrix__drawPixel(15, 63, YELLOW);
+  led_matrix__drawPixel(31, 63, BLUE);
+  TEST_ASSERT_EQUAL_HEX8(0b0001110, led_matrix_buffer[15][63]);
+}
 
-// void test_led_matrix_draw_Pixel_fails_at_out_of_bound_pixel(void)
-// {
-//     bool isSuccess = led_matrix__drawPixel(32, 64, 5);
-//     TEST_ASSERT_FALSE(isSuccess);
-// }
+void test_led_matrix_draw_Pixel_fails_at_out_of_bound_pixel(void)
+{
+    bool isSuccess = led_matrix__drawPixel(32, 64, 5);
+    TEST_ASSERT_FALSE(isSuccess);
+}
 
 // void test_glow_all_pixels(void)
 // {
