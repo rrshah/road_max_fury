@@ -24,7 +24,7 @@
  *
  * 1 tab == 4 spaces!
  */
-
+#pragma once
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
 

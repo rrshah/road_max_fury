@@ -3,14 +3,20 @@
 #include <string.h>
 
 #include "FreeRTOS.h"
-#include "queue.h"
-
 #include "display_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "object.h"
+#include "queue.h"
+#include "semphr.h"
 
 extern uint8_t game_screen_state;
+extern SemaphoreHandle_t countdown;
+extern SemaphoreHandle_t crash;
+extern SemaphoreHandle_t level;
+extern SemaphoreHandle_t car_moving;
+extern SemaphoreHandle_t play;
+extern SemaphoreHandle_t no_sound;
 
 static void draw_game_screen() {
   generate_random_obstacles();
@@ -27,17 +33,20 @@ void display_task(void *params) {
   while (true) {
     switch (game_screen_state) {
     case START_SCREEN:
+      xSemaphoreGive(no_sound);
       draw_start_screen();
       break;
     case GAME_SCREEN:
+      xSemaphoreGive(car_moving);
       draw_game_screen();
       break;
     case CAR_CRASH:
+      xSemaphoreGive(crash);
       draw_crash_screen();
       break;
     }
 
-    vTaskDelay(30);
+    vTaskDelay(50);
   }
 }
 

@@ -9,7 +9,7 @@ enum screen_state { START_SCREEN = 0, GAME_SCREEN = 1, CAR_CRASH = 2 };
 typedef struct {
   uint8_t level_obstacle_mod;
   uint8_t num_of_obstacles;
-  uint8_t score_multiplier;
+  uint8_t score_per_car;
 } level_t;
 
 typedef struct b {
