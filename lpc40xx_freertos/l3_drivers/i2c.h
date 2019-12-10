@@ -31,7 +31,8 @@ typedef enum {
  * This is speed of the peripheral clock feeding the I2C peripheral; it is used
  * to set the desired_i2c_bus_speed_in_hz
  */
-void i2c__initialize(i2c_e i2c_number, uint32_t desired_i2c_bus_speed_in_hz, uint32_t peripheral_clock_hz);
+void i2c__initialize(i2c_e i2c_number, uint32_t desired_i2c_bus_speed_in_hz,
+                     uint32_t peripheral_clock_hz);
 
 /**
  * @returns true if the I2C device at the given address responds back with an
@@ -49,14 +50,16 @@ bool i2c__detect(i2c_e i2c_number, uint8_t slave_address);
  * @note This is the same as i2c__read_slave_data() with number_of_bytes set to
  * 1
  */
-uint8_t i2c__read_single(i2c_e i2c_number, uint8_t slave_address, uint8_t slave_memory_address);
+uint8_t i2c__read_single(i2c_e i2c_number, uint8_t slave_address,
+                         uint8_t slave_memory_address);
 
 /**
  * Reads multiple registers of the slave_address, starting with the
  * starting_slave_memory_address Typical devices implement 'auto increment' of
  * the starting_slave_memory_address which this function relies upon
  */
-bool i2c__read_slave_data(i2c_e i2c_number, uint8_t slave_address, uint8_t starting_slave_memory_address,
+bool i2c__read_slave_data(i2c_e i2c_number, uint8_t slave_address,
+                          uint8_t starting_slave_memory_address,
                           uint8_t *bytes_to_read, uint32_t number_of_bytes);
 
 /**
@@ -68,12 +71,15 @@ bool i2c__read_slave_data(i2c_e i2c_number, uint8_t slave_address, uint8_t start
  * @note This is the same as i2c__write_slave_data() with number_of_bytes set to
  * 1
  */
-bool i2c__write_single(i2c_e i2c_number, uint8_t slave_address, uint8_t slave_memory_address, uint8_t value);
+bool i2c__write_single(i2c_e i2c_number, uint8_t slave_address,
+                       uint8_t slave_memory_address, uint8_t value);
 
 /**
  * Writes multiple registers of the slave_address, starting with the
  * starting_slave_memory_address Typical devices implement 'auto increment' of
  * the starting_slave_memory_address which this function relies upon
  */
-bool i2c__write_slave_data(i2c_e i2c_number, uint8_t slave_address, uint8_t starting_slave_memory_address,
-                           const uint8_t *bytes_to_write, uint32_t number_of_bytes);
+bool i2c__write_slave_data(i2c_e i2c_number, uint8_t slave_address,
+                           uint8_t starting_slave_memory_address,
+                           const uint8_t *bytes_to_write,
+                           uint32_t number_of_bytes);

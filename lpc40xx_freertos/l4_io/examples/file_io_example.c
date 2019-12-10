@@ -38,8 +38,8 @@ void file_io_example__task(void *params) {
     }
 
     if (FR_OK == result) {
-      printf("%lu: File read successfully: %lu bytes in %lu ticks\n", xTaskGetTickCount(), f_size(&file),
-             (xTaskGetTickCount() - ticks));
+      printf("%lu: File read successfully: %lu bytes in %lu ticks\n",
+             xTaskGetTickCount(), f_size(&file), (xTaskGetTickCount() - ticks));
     } else {
       printf("File failed to be opened, error %i\n", result);
     }

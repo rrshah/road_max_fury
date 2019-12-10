@@ -1,7 +1,8 @@
 #include "leightweight_lock.h"
 
 void leightweight_lock__initialize(leightweight_lock_s *lock) {
-  lock->signal = xSemaphoreCreateCountingStatic(UINT32_MAX, 0, &(lock->signal_struct));
+  lock->signal =
+      xSemaphoreCreateCountingStatic(UINT32_MAX, 0, &(lock->signal_struct));
   lock->count = 0;
 }
 

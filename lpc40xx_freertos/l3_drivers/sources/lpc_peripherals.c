@@ -111,7 +111,8 @@ void lpc_peripheral__interrupt_dispatcher(void) {
   /* Get the IRQ number we are in.  Note that ICSR's real ISR bits are offset
    * by 16. We can read ICSR register too, but let's just read 8-bits directly.
    */
-  const uint8_t isr_num = (*((uint8_t *)0xE000ED04)) - 16; // (SCB->ICSR & 0xFF) - 16;
+  const uint8_t isr_num =
+      (*((uint8_t *)0xE000ED04)) - 16; // (SCB->ICSR & 0xFF) - 16;
 
   /* Lookup the function pointer we want to call and make the call */
   function__void_f isr_to_service = lpc_peripheral__isr_registrations[isr_num];
@@ -128,7 +129,8 @@ void lpc_peripheral__interrupt_dispatcher(void) {
 
 void lpc_peripheral__turn_on_power_to(lpc_peripheral_e peripheral) {
   if (peripheral < sizeof(lpc_peripheral_pconp_bit_map)) {
-    const uint32_t power_on_bit = (uint32_t)lpc_peripheral_pconp_bit_map[peripheral];
+    const uint32_t power_on_bit =
+        (uint32_t)lpc_peripheral_pconp_bit_map[peripheral];
     LPC_SC->PCONP |= (UINT32_C(1) << power_on_bit);
   }
 }
@@ -137,14 +139,16 @@ bool lpc_peripheral__is_powered_on(lpc_peripheral_e peripheral) {
   bool powered_on = false;
 
   if (peripheral < sizeof(lpc_peripheral_pconp_bit_map)) {
-    const uint32_t power_on_bit = (uint32_t)lpc_peripheral_pconp_bit_map[peripheral];
+    const uint32_t power_on_bit =
+        (uint32_t)lpc_peripheral_pconp_bit_map[peripheral];
     powered_on = 0 != (LPC_SC->PCONP & (UINT32_C(1) << power_on_bit));
   }
 
   return powered_on;
 }
 
-void lpc_peripheral__enable_interrupt(lpc_peripheral_e peripheral, function__void_f isr_callback) {
+void lpc_peripheral__enable_interrupt(lpc_peripheral_e peripheral,
+                                      function__void_f isr_callback) {
   lpc_peripheral__isr_registrations[peripheral] = isr_callback;
 
   /**
