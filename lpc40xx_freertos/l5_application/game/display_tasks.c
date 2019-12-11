@@ -17,6 +17,7 @@ extern SemaphoreHandle_t level;
 extern SemaphoreHandle_t car_moving;
 extern SemaphoreHandle_t play;
 extern SemaphoreHandle_t no_sound;
+extern SemaphoreHandle_t change_game_state;
 
 static void draw_game_screen() {
   generate_random_obstacles();
@@ -26,23 +27,51 @@ static void draw_game_screen() {
 }
 
 void display_task(void *params) {
-
+  bool change_state = false;
   object__init_player_car();
   game_screen_state = START_SCREEN;
 
   while (true) {
+    if (xSemaphoreTake(change_game_state, 0)) {
+      change_state = true;
+    }
+
     switch (game_screen_state) {
     case START_SCREEN:
       xSemaphoreGive(no_sound);
       draw_start_screen();
+      if (change_state) {
+        led_matrix__turnOffAllPixels();
+        game_screen_state = GAME_SCREEN;
+        change_state = false;
+      }
       break;
     case GAME_SCREEN:
       xSemaphoreGive(car_moving);
       draw_game_screen();
+      if (change_state) {
+        game_screen_state = PAUSE_SCREEN;
+        change_state = false;
+      }
+      break;
+    case PAUSE_SCREEN:
+      if (change_state) {
+        game_screen_state = GAME_SCREEN;
+        change_state = false;
+      }
       break;
     case CAR_CRASH:
       xSemaphoreGive(crash);
       draw_crash_screen();
+      vTaskDelay(5000);
+      game_screen_state = GAME_OVER;
+      break;
+    case GAME_OVER:
+      led_matrix__turnOffAllPixels();
+      if (change_state) {
+        game_screen_state = START_SCREEN;
+        change_state = false;
+      }
       break;
     }
 
@@ -51,7 +80,8 @@ void display_task(void *params) {
 }
 
 // smiley
-static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
+static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
+                                 0xa5, 0x81, 0x42, 0x3c};
 
 void test_graphics_task(void *params) {
 
