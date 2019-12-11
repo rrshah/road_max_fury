@@ -39,8 +39,7 @@ bool uart__is_transmit_queue_initialized(uart_e uart);
  *
  * @note Each the the queues should be of item type 'sizeof(char)'
  */
-bool uart__enable_queues(uart_e uart, QueueHandle_t queue_receive,
-                         QueueHandle_t queue_transmit);
+bool uart__enable_queues(uart_e uart, QueueHandle_t queue_receive, QueueHandle_t queue_transmit);
 
 /**
  * Polled version to get a char; this never returns until a char is obtained
