@@ -41,21 +41,15 @@ int main(void) {
   led0 = board_io__get_led0();
   led1 = board_io__get_led1();
 
-  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0,
-              PRIORITY_LOW, NULL);
-  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1,
-              PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
+  xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
   // xTaskCreate(test_led_matrix_task, "led_matrix", (2048 / sizeof(void *)),
   // NULL, PRIORITY_LOW, NULL); xTaskCreate(test_graphics_task,
   // "test_graphics_task", 2048, NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(accelerometer_task, "acc_task", (1024 / sizeof(void *)), NULL,
-              PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", (2048 / sizeof(void *)), NULL,
-              PRIORITY_LOW, NULL);
-  xTaskCreate(button_task, "button_task", (1024 / sizeof(void *)), NULL,
-              PRIORITY_HIGH, NULL);
-  xTaskCreate(mp3_player_task, "mp3_player_task", (1024 / sizeof(void *)), NULL,
-              PRIORITY_LOW, NULL);
+  xTaskCreate(accelerometer_task, "acc_task", (1024 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(display_task, "display_task", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(button_task, "button_task", (1024 / sizeof(void *)), NULL, PRIORITY_HIGH, NULL);
+  xTaskCreate(mp3_player_task, "mp3_player_task", (1024 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
 
   sj2_cli__init();
 

@@ -4,13 +4,7 @@
 
 enum move { DOWN = 0, DOWN_AND_LEFT_RIGHT = 1 };
 enum direction { RIGHT = 0, LEFT = 1 };
-enum screen_state {
-  START_SCREEN = 0,
-  GAME_SCREEN = 1,
-  CAR_CRASH = 2,
-  PAUSE_SCREEN = 3,
-  GAME_OVER = 4
-};
+enum screen_state { START_SCREEN = 0, GAME_SCREEN = 1, CAR_CRASH = 2, PAUSE_SCREEN = 3, GAME_OVER = 4 };
 
 typedef struct {
   uint8_t level_obstacle_mod;

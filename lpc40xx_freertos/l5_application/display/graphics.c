@@ -6,15 +6,14 @@
 const uint8_t _width = 32;
 const uint8_t _height = 64;
 
-#define swap(a, b)                                                             \
-  {                                                                            \
-    int16_t t = a;                                                             \
-    a = b;                                                                     \
-    b = t;                                                                     \
+#define swap(a, b)                                                                                                     \
+  {                                                                                                                    \
+    int16_t t = a;                                                                                                     \
+    a = b;                                                                                                             \
+    b = t;                                                                                                             \
   }
 
-void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w,
-                int16_t h, uint16_t color) {
+void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
 
   int16_t i, j, byteWidth = (w + 7) / 8;
 
@@ -68,13 +67,9 @@ void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
   }
 }
 
-void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-  drawLine(x, y, x, y + h - 1, color);
-}
+void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) { drawLine(x, y, x, y + h - 1, color); }
 
-void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
-  drawLine(x, y, x + w - 1, y, color);
-}
+void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) { drawLine(x, y, x + w - 1, y, color); }
 
 void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
   for (int16_t i = x; i < x + w; i++) {
