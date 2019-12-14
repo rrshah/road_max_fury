@@ -389,3 +389,22 @@ void draw_crash_screen() {
   drawBitmap(27, 22, crash_screen_exclaimation, 2, 5, RED);
   draw_borders();
 }
+
+const uint8_t game_over_G[] = {0xF8, 0x88, 0xB8, 0x80, 0xF8};
+const uint8_t game_over_A[] = {0x88, 0x88, 0xF8, 0x50, 0x20};
+const uint8_t game_over_M[] = {0x88, 0x88, 0xA8, 0xD8, 0x88};
+const uint8_t game_over_E[] = {0xF8, 0x80, 0xBC, 0x80, 0xF8};
+const uint8_t game_over_O[] = {0x70, 0x88, 0x88, 0x88, 0x70};
+const uint8_t game_over_V[] = {0x20, 0x50, 0x88, 0x88, 0x88};
+const uint8_t game_over_R[] = {0x98, 0xA0, 0xF8, 0x88, 0xF8};
+
+void draw_gameover_screen() {
+  drawBitmap(4, 28, game_over_G, 5, 5, RED);
+  drawBitmap(10, 28, game_over_A, 5, 5, RED);
+  drawBitmap(16, 28, game_over_M, 5, 5, RED);
+  drawBitmap(22, 28, game_over_E, 5, 5, RED);
+  drawBitmap(4, 20, game_over_O, 5, 5, RED);
+  drawBitmap(10, 20, game_over_V, 5, 5, RED);
+  drawBitmap(16, 20, game_over_E, 5, 5, RED);
+  drawBitmap(22, 20, game_over_R, 5, 5, RED);
+}

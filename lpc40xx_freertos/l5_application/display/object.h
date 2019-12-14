@@ -43,3 +43,4 @@ void draw_start_screen();
 void collision_detector();
 void draw_crash_screen();
 void draw_countdown_screen();
+void draw_gameover_screen();

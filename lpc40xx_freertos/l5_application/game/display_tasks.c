@@ -73,6 +73,7 @@ void display_task(void *params) {
       break;
     case GAME_OVER:
       led_matrix__turnOffAllPixels();
+      draw_gameover_screen();
       if (change_state) {
         game_screen_state = START_SCREEN;
         change_state = false;
