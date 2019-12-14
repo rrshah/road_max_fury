@@ -12,7 +12,6 @@
 
 extern uint8_t game_screen_state;
 extern SemaphoreHandle_t crash;
-extern SemaphoreHandle_t level;
 extern SemaphoreHandle_t car_moving;
 extern SemaphoreHandle_t no_sound;
 extern SemaphoreHandle_t change_game_state;

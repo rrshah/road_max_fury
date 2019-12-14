@@ -5,8 +5,8 @@
 #include "FreeRTOS.h"
 #include "graphics.h"
 #include "object.h"
-#include "task.h"
 #include "semphr.h"
+#include "task.h"
 
 #define BORDER_HEIGHT (52)
 #define BORDER_WIDTH (2)
@@ -21,7 +21,7 @@
 
 extern SemaphoreHandle_t countdown;
 extern SemaphoreHandle_t play;
-
+extern SemaphoreHandle_t level;
 
 const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
 
@@ -205,8 +205,10 @@ static void move_obstacles(bitmap_object *obstacle) {
     obstacle->isAlive = false;
     score += levels[current_level - 1].score_per_car;
     if (score > LEVEL_1_SCORE && score < LEVEL_2_SCORE) {
+      xSemaphoreGive(level);
       current_level = 2;
     } else if (score > LEVEL_2_SCORE) {
+      xSemaphoreGive(level);
       current_level = 3;
     }
     num_of_on_screen_obstacles--;
