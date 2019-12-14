@@ -403,13 +403,27 @@ static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
                                  0xa5, 0x81, 0x42, 0x3c};
 
 void draw_gameover_screen() {
+  uint8_t hundred, ten, unit;
   drawRect(0, 0, LED_MATRIX_WIDTH, LED_MATRIX_HEIGHT, WHITE);
-  drawBitmap(4, 28, game_over_G, 5, 5, RED);
-  drawBitmap(10, 28, game_over_A, 5, 5, RED);
-  drawBitmap(16, 28, game_over_M, 5, 5, RED);
-  drawBitmap(22, 28, game_over_E, 5, 5, RED);
-  drawBitmap(4, 20, game_over_O, 5, 5, RED);
-  drawBitmap(10, 20, game_over_V, 5, 5, RED);
-  drawBitmap(16, 20, game_over_E, 5, 5, RED);
-  drawBitmap(22, 20, game_over_R, 5, 5, RED);
+  drawBitmap(4, 52, game_over_G, 5, 5, RED);
+  drawBitmap(10, 52, game_over_A, 5, 5, RED);
+  drawBitmap(16, 52, game_over_M, 5, 5, RED);
+  drawBitmap(22, 52, game_over_E, 5, 5, RED);
+  drawBitmap(4, 44, game_over_O, 5, 5, RED);
+  drawBitmap(10, 44, game_over_V, 5, 5, RED);
+  drawBitmap(16, 44, game_over_E, 5, 5, RED);
+  drawBitmap(22, 44, game_over_R, 5, 5, RED);
+
+  drawBitmap(6, 30, score_letter_S, 3, 5, BLUE);
+  drawBitmap(10, 30, score_letter_C, 3, 5, BLUE);
+  drawBitmap(14, 30, score_letter_O, 3, 5, BLUE);
+  drawBitmap(18, 30, score_letter_R, 3, 5, BLUE);
+  drawBitmap(22, 30, score_letter_E, 3, 5, BLUE);
+
+  get_score(&hundred, &ten, &unit);
+  drawBitmap(10, 24, number[hundred], 3, 5, CYAN);
+  drawBitmap(14, 24, number[ten], 3, 5, CYAN);
+  drawBitmap(18, 24, number[unit], 3, 5, CYAN);
+
+  drawBitmap(12, 12, smiley, 8, 9, YELLOW);
 }
