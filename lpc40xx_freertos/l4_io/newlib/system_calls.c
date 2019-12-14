@@ -94,7 +94,8 @@ int _isatty(int file_descriptor) {
 
   // Pointer based values defined by <stdio.h>
   default:
-    if ((int)stdin == file_descriptor || (int)stdout == file_descriptor || (int)stderr == file_descriptor) {
+    if ((int)stdin == file_descriptor || (int)stdout == file_descriptor ||
+        (int)stderr == file_descriptor) {
       is_atty = 1;
     }
   }
@@ -116,9 +117,12 @@ int _open(const char *path, int flags, ...) {
  */
 int _write(int file_descriptor, const char *ptr, int bytes_to_write) {
   if (_isatty(file_descriptor)) {
-    const bool is_standard_error = ((int)stderr == file_descriptor || file_id__stderr == file_descriptor);
-    const bool rtos_is_running = taskSCHEDULER_RUNNING == xTaskGetSchedulerState();
-    const bool transmit_queue_enabled = uart__is_transmit_queue_initialized(system_calls__uart_type);
+    const bool is_standard_error =
+        ((int)stderr == file_descriptor || file_id__stderr == file_descriptor);
+    const bool rtos_is_running =
+        taskSCHEDULER_RUNNING == xTaskGetSchedulerState();
+    const bool transmit_queue_enabled =
+        uart__is_transmit_queue_initialized(system_calls__uart_type);
 
     /* If the RTOS is running with the UART queue enabled, AND it is not an
      * error printf, then queue the output and return quickly, otherwise there
@@ -130,7 +134,8 @@ int _write(int file_descriptor, const char *ptr, int bytes_to_write) {
       system_calls__polled_put(ptr, bytes_to_write);
     }
   } else {
-    system_calls__print_and_halt("ERROR: Call to _write() with an unsupported handle");
+    system_calls__print_and_halt(
+        "ERROR: Call to _write() with an unsupported handle");
   }
 
   return bytes_to_write;
@@ -152,7 +157,8 @@ int _read(int file_descriptor, char *ptr, int len) {
       ++bytes_read;
     }
   } else {
-    system_calls__print_and_halt("ERROR: Call to _read() with an unsupported handle");
+    system_calls__print_and_halt(
+        "ERROR: Call to _read() with an unsupported handle");
   }
 
   return bytes_read;

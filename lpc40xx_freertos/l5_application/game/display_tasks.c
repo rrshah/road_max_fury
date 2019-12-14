@@ -42,9 +42,17 @@ void display_task(void *params) {
       draw_start_screen();
       if (change_state) {
         led_matrix__turnOffAllPixels();
-        game_screen_state = GAME_SCREEN;
+        game_screen_state = COUNTDOWN_SCREEN;
         change_state = false;
       }
+      break;
+    case COUNTDOWN_SCREEN:
+      xSemaphoreGive(countdown);
+      draw_countdown_screen();
+      if (change_state) {
+        change_state = false;
+      }
+      game_screen_state = GAME_SCREEN;
       break;
     case GAME_SCREEN:
       xSemaphoreGive(car_moving);
@@ -80,7 +88,8 @@ void display_task(void *params) {
 }
 
 // smiley
-static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
+static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
+                                 0xa5, 0x81, 0x42, 0x3c};
 
 void test_graphics_task(void *params) {
 
