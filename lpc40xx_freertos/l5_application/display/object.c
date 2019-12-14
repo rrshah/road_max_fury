@@ -204,10 +204,10 @@ static void move_obstacles(bitmap_object *obstacle) {
   if (obstacle->y == (-1) * CAR_HEIGHT_WITH_PADDING) {
     obstacle->isAlive = false;
     score += levels[current_level - 1].score_per_car;
-    if (score > LEVEL_1_SCORE && score < LEVEL_2_SCORE) {
+    if (score > LEVEL_1_SCORE && score < LEVEL_2_SCORE && current_level != 2) {
       xSemaphoreGive(level);
       current_level = 2;
-    } else if (score > LEVEL_2_SCORE) {
+    } else if (score > LEVEL_2_SCORE && current_level != 3) {
       xSemaphoreGive(level);
       current_level = 3;
     }
@@ -268,6 +268,7 @@ void draw_countdown_screen() {
     i--;
   }
   xSemaphoreGive(play);
+  vTaskDelay(500);
   player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
 }
 

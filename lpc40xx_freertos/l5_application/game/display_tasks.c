@@ -26,6 +26,7 @@ static void draw_game_screen() {
 void display_task(void *params) {
   bool change_state = false;
   object__init_player_car();
+
   game_screen_state = START_SCREEN;
 
   while (true) {
@@ -69,10 +70,10 @@ void display_task(void *params) {
       xSemaphoreGive(crash);
       draw_crash_screen();
       vTaskDelay(5000);
+      led_matrix__turnOffAllPixels();
       game_screen_state = GAME_OVER;
       break;
     case GAME_OVER:
-      led_matrix__turnOffAllPixels();
       draw_gameover_screen();
       if (change_state) {
         game_screen_state = START_SCREEN;

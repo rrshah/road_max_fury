@@ -73,21 +73,21 @@ static void accelerometer_task(void *params) {
 
     switch (y) {
     case 0 ... 150:
-      // printf("Go straight, y value=%lu\n", y);
+      printf("Go straight, y value=%lu\n", y);
       break;
 
     case 151 ... 800:
       move_car_right();
-      // printf("Go slight right, y value=%lu\n", y);
+      printf("Go slight right, y value=%lu\n", y);
       break;
 
     case 3100 ... 3944:
       move_car_left();
-      // printf("Go extreme left, y value=%lu\n", y);
+      printf("Go extreme left, y value=%lu\n", y);
       break;
 
     case 3945 ... 4095:
-      // printf("Go straight, y value=%lu\n", y);
+      printf("Go straight, y value=%lu\n", y);
       break;
 
     default:
