@@ -398,7 +398,11 @@ const uint8_t game_over_O[] = {0x70, 0x88, 0x88, 0x88, 0x70};
 const uint8_t game_over_V[] = {0x20, 0x50, 0x88, 0x88, 0x88};
 const uint8_t game_over_R[] = {0x98, 0xA0, 0xF8, 0x88, 0xF8};
 
+static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
+                                 0xa5, 0x81, 0x42, 0x3c};
+
 void draw_gameover_screen() {
+  drawRect(0, 0, LED_MATRIX_WIDTH, LED_MATRIX_HEIGHT, WHITE);
   drawBitmap(4, 28, game_over_G, 5, 5, RED);
   drawBitmap(10, 28, game_over_A, 5, 5, RED);
   drawBitmap(16, 28, game_over_M, 5, 5, RED);

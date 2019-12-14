@@ -84,21 +84,3 @@ void display_task(void *params) {
     vTaskDelay(50);
   }
 }
-
-// smiley
-static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
-                                 0xa5, 0x81, 0x42, 0x3c};
-
-void test_graphics_task(void *params) {
-
-  // drawLine(0, 0, 31, 63, red_4);
-  // drawRect(0, 0, 10, 20, white_7);
-  // fillRect(0, 0, 20, 10, YELLOW);
-  // drawChar(5, 5, 'R', red_4, red_4, 1);
-  drawBitmap(15, 31, smiley, 8, 9, RED);
-
-  while (true) {
-    // draw_car(player_car);
-    vTaskDelay(1);
-  }
-}
