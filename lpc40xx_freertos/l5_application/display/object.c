@@ -425,5 +425,5 @@ void draw_gameover_screen() {
   drawBitmap(14, 24, number[ten], 3, 5, CYAN);
   drawBitmap(18, 24, number[unit], 3, 5, CYAN);
 
-  drawBitmap(12, 12, smiley, 8, 9, YELLOW);
+  drawBitmap(12, 8, smiley, 8, 9, YELLOW);
 }
