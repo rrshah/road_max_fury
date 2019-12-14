@@ -76,7 +76,7 @@ void mp3_player_task(void *pvParameters) {
   uint8_t current_state = NO_SOUND;
 
   while (true) {
-    if (xSemaphoreTake(countdown, 0) && current_state != COUNTDOWN) {
+    if (xSemaphoreTake(countdown, 0)) {
       play_audio(COUNTDOWN);
       current_state = COUNTDOWN;
     } else if (xSemaphoreTake(crash, 0) && current_state != CRASH) {

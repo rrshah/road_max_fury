@@ -11,11 +11,9 @@
 #include "semphr.h"
 
 extern uint8_t game_screen_state;
-extern SemaphoreHandle_t countdown;
 extern SemaphoreHandle_t crash;
 extern SemaphoreHandle_t level;
 extern SemaphoreHandle_t car_moving;
-extern SemaphoreHandle_t play;
 extern SemaphoreHandle_t no_sound;
 extern SemaphoreHandle_t change_game_state;
 
@@ -47,7 +45,6 @@ void display_task(void *params) {
       }
       break;
     case COUNTDOWN_SCREEN:
-      xSemaphoreGive(countdown);
       draw_countdown_screen();
       if (change_state) {
         change_state = false;
@@ -63,6 +60,7 @@ void display_task(void *params) {
       }
       break;
     case PAUSE_SCREEN:
+      xSemaphoreGive(no_sound);
       if (change_state) {
         game_screen_state = GAME_SCREEN;
         change_state = false;

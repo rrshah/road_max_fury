@@ -6,6 +6,7 @@
 #include "graphics.h"
 #include "object.h"
 #include "task.h"
+#include "semphr.h"
 
 #define BORDER_HEIGHT (52)
 #define BORDER_WIDTH (2)
@@ -17,6 +18,10 @@
 #define LEVEL_1_SCORE (30)
 #define LEVEL_2_SCORE (100)
 #define LEVEL_3_SCORE (200)
+
+extern SemaphoreHandle_t countdown;
+extern SemaphoreHandle_t play;
+
 
 const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
 
@@ -162,8 +167,8 @@ void draw_score() {
 void object__init_player_car(void) {
   player_car.x = 25;
   player_car.y = 10;
-  player_car.height = 6;
-  player_car.width = 6;
+  player_car.height = CAR_HEIGHT_WITH_PADDING;
+  player_car.width = CAR_WIDTH_WITH_PADDING;
   player_car.color = CYAN;
   player_car.image = car;
 }
@@ -246,6 +251,7 @@ void move_car_right() {
 void draw_countdown_screen() {
   uint8_t i = 3;
   while (i > 0) {
+    xSemaphoreGive(countdown);
     object__draw(countdown_car);
     draw_borders();
     drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2,
@@ -259,6 +265,7 @@ void draw_countdown_screen() {
     vTaskDelay(500);
     i--;
   }
+  xSemaphoreGive(play);
   player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
 }
 
