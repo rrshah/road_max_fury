@@ -244,10 +244,12 @@ void move_car_right() {
 }
 
 void draw_countdown_screen() {
-  uint8_t i = 0;
-  while (i < 3) {
+  uint8_t i = 3;
+  while (i > 0) {
     object__draw(countdown_car);
     draw_borders();
+    drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2,
+               BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
     draw_score();
     vTaskDelay(500);
 
@@ -255,10 +257,9 @@ void draw_countdown_screen() {
     draw_borders();
     draw_score();
     vTaskDelay(500);
-    i++;
+    i--;
   }
   player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
-  led_matrix__turnOffAllPixels();
 }
 
 void draw() {
