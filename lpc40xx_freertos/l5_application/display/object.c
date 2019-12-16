@@ -99,10 +99,31 @@ bitmap_object obstacle_types[] = {
 
 static void move_obstacles(bitmap_object *obstacle);
 static void draw_obstacles();
+static void draw_player_car();
 
 void object__draw(bitmap_object object) {
   drawBitmap(object.x, object.y, object.image, object.width, object.height, object.color);
 }
+
+void move() {
+  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+    if (car_obstacle[i].isAlive) {
+      move_obstacles(&car_obstacle[i]);
+    }
+  }
+}
+
+void draw() {
+  draw_player_car();
+  draw_borders();
+  draw_obstacles();
+  draw_score();
+}
+
+/*****************************************************************************
+ *                 MISC -> BEGIN
+ *
+ *****************************************************************************/
 
 void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
   uint16_t temp_score = score;
@@ -113,6 +134,11 @@ void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
   *hundred = temp_score % 10;
 }
 
+/*****************************************************************************
+ *                 PLAYER CAR -> BEGIN
+ *
+ *****************************************************************************/
+
 void object__init_player_car(void) {
   player_car.x = 25;
   player_car.y = 10;
@@ -120,14 +146,6 @@ void object__init_player_car(void) {
   player_car.width = CAR_WIDTH_WITH_PADDING;
   player_car.color = CYAN;
   player_car.image = car;
-}
-
-void move() {
-  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
-    if (car_obstacle[i].isAlive) {
-      move_obstacles(&car_obstacle[i]);
-    }
-  }
 }
 
 static void draw_player_car() { object__draw(player_car); }
@@ -144,12 +162,10 @@ void move_car_right() {
   }
 }
 
-void draw() {
-  draw_player_car();
-  draw_borders();
-  draw_obstacles();
-  draw_score();
-}
+/*****************************************************************************
+ *                 PLAYER CAR -> END
+ *
+ *****************************************************************************/
 
 /*****************************************************************************
  *                 OBSTACLES -> BEGIN
