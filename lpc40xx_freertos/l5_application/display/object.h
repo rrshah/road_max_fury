@@ -32,14 +32,12 @@ typedef struct b {
   uint8_t direction;
 } bitmap_object;
 
-// void object__init();
 void move_car_left();
 void move_car_right();
 void draw();
 void move();
 void generate_random_obstacles();
 void object__init_player_car(void);
-void draw_start_screen();
 void collision_detector();
 void draw_countdown_screen();
 void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit);

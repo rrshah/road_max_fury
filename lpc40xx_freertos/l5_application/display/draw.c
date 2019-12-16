@@ -84,6 +84,7 @@ static const uint8_t number[][5] = {{0xE0, 0xA0, 0xA0, 0xA0, 0xE0}, {0xE0, 0x40,
 
 void draw_gameover_screen() {
   uint8_t hundred, ten, unit;
+
   drawRect(0, 0, LED_MATRIX_WIDTH, LED_MATRIX_HEIGHT, WHITE);
   drawBitmap(4, 52, game_over_G, 5, 5, RED);
   drawBitmap(10, 52, game_over_A, 5, 5, RED);
