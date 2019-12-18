@@ -150,13 +150,11 @@ static void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
 void draw_score() {
   uint8_t hundred, ten, unit;
 
-  drawBitmap(0, 59, score_letter_S, 3, 5, BLUE);
-  drawBitmap(4, 59, score_letter_C, 3, 5, BLUE);
-  drawBitmap(8, 59, score_letter_O, 3, 5, BLUE);
-  drawBitmap(12, 59, score_letter_R, 3, 5, BLUE);
-  drawBitmap(16, 59, score_letter_E, 3, 5, BLUE);
-
-  drawBitmap(19, 59, score_colon, 1, 5, BLUE);
+  drawBitmap(1, 59, score_letter_S, 3, 5, BLUE);
+  drawBitmap(5, 59, score_letter_C, 3, 5, BLUE);
+  drawBitmap(9, 59, score_letter_O, 3, 5, BLUE);
+  drawBitmap(13, 59, score_letter_R, 3, 5, BLUE);
+  drawBitmap(17, 59, score_letter_E, 3, 5, BLUE);
 
   get_score(&hundred, &ten, &unit);
   drawBitmap(21, 59, number[hundred], 3, 5, CYAN);
@@ -394,7 +392,7 @@ void draw_crash_screen() {
 const uint8_t game_over_G[] = {0xF8, 0x88, 0xB8, 0x80, 0xF8};
 const uint8_t game_over_A[] = {0x88, 0x88, 0xF8, 0x50, 0x20};
 const uint8_t game_over_M[] = {0x88, 0x88, 0xA8, 0xD8, 0x88};
-const uint8_t game_over_E[] = {0xF8, 0x80, 0xBC, 0x80, 0xF8};
+const uint8_t game_over_E[] = {0xF8, 0x80, 0xF8, 0x80, 0xF8};
 const uint8_t game_over_O[] = {0x70, 0x88, 0x88, 0x88, 0x70};
 const uint8_t game_over_V[] = {0x20, 0x50, 0x88, 0x88, 0x88};
 const uint8_t game_over_R[] = {0x98, 0xA0, 0xF8, 0x88, 0xF8};
