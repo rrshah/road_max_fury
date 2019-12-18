@@ -37,7 +37,6 @@ void display_task(void *params) {
     case START_SCREEN:
       xSemaphoreGive(no_sound);
       draw_start_screen();
-      // object__init_player_car();
       game_init();
       if (change_state) {
         led_matrix__turnOffAllPixels();
@@ -76,6 +75,7 @@ void display_task(void *params) {
       break;
     case GAME_OVER:
       draw_gameover_screen();
+      xSemaphoreGive(no_sound);
       if (change_state) {
         game_screen_state = START_SCREEN;
         change_state = false;

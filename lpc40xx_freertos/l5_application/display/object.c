@@ -307,6 +307,7 @@ void draw() {
   draw_obstacles();
   draw_score();
   draw_level();
+  // draw_and_move_borders();
 }
 
 static void generate_obstacle(bitmap_object *obstacle) {
