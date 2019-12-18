@@ -166,13 +166,13 @@ void draw_score() {
 }
 
 void draw_level() {
-  drawBitmap(1, 53, level_letter_L, 3, 5, GREEN);
-  drawBitmap(5, 53, score_letter_E, 3, 5, GREEN);
-  drawBitmap(9, 53, level_letter_V, 3, 5, GREEN);
-  drawBitmap(13, 53, score_letter_E, 3, 5, GREEN);
-  drawBitmap(17, 53, level_letter_L, 3, 5, GREEN);
+  drawBitmap(5, 53, level_letter_L, 3, 5, GREEN);
+  drawBitmap(9, 53, score_letter_E, 3, 5, GREEN);
+  drawBitmap(13, 53, level_letter_V, 3, 5, GREEN);
+  drawBitmap(17, 53, score_letter_E, 3, 5, GREEN);
+  drawBitmap(21, 53, level_letter_L, 3, 5, GREEN);
 
-  drawBitmap(21, 53, number[current_level], 3, 5, GREEN);
+  drawBitmap(25, 53, number[current_level], 3, 5, GREEN);
 }
 
 void object__init_player_car(void) {
