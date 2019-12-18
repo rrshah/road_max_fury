@@ -75,14 +75,15 @@ uint8_t game_screen_state = START_SCREEN;
 static uint8_t current_level = 1;
 static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
-static bitmap_object countdown_car = {.color = CYAN,
-                                      .x = (LED_MATRIX_WIDTH / 2) -
-                                           (CAR_WIDTH_WITH_PADDING / 2),
-                                      .y = 10,
-                                      .image = car,
-                                      .height = CAR_HEIGHT_WITH_PADDING,
-                                      .width = CAR_WIDTH_WITH_PADDING,
-                                      .isAlive = true};
+static bitmap_object start_screen_car = {.color = CYAN,
+                                         .x = (LED_MATRIX_WIDTH / 2) -
+                                              (CAR_WIDTH_WITH_PADDING / 2),
+                                         .y = 5,
+                                         .image = car,
+                                         .height = CAR_HEIGHT_WITH_PADDING,
+                                         .width = CAR_WIDTH_WITH_PADDING,
+                                         .direction = RIGHT,
+                                         .isAlive = true};
 
 static bitmap_object car_obstacle[NUM_OF_OBSTACLES];
 static level_t levels[] = {{
@@ -136,6 +137,25 @@ bitmap_object obstacle_types[] = {
      .isAlive = true},
 };
 
+static void object__init_player_car(void) {
+  player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
+  player_car.y = 10;
+  player_car.height = CAR_HEIGHT_WITH_PADDING;
+  player_car.width = CAR_WIDTH_WITH_PADDING;
+  player_car.color = CYAN;
+  player_car.image = car;
+}
+
+void game_init() {
+  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+    car_obstacle[i].isAlive = false;
+  }
+  num_of_on_screen_obstacles = 0;
+  current_level = 1;
+  score = 0;
+  object__init_player_car();
+}
+
 void object__draw(bitmap_object object) {
   drawBitmap(object.x, object.y, object.image, object.width, object.height,
              object.color);
@@ -173,15 +193,6 @@ void draw_level() {
   drawBitmap(21, 53, level_letter_L, 3, 5, GREEN);
 
   drawBitmap(25, 53, number[current_level], 3, 5, GREEN);
-}
-
-void object__init_player_car(void) {
-  player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
-  player_car.y = 10;
-  player_car.height = CAR_HEIGHT_WITH_PADDING;
-  player_car.width = CAR_WIDTH_WITH_PADDING;
-  player_car.color = CYAN;
-  player_car.image = car;
 }
 
 static void move_obstacles(bitmap_object *obstacle) {
@@ -342,7 +353,26 @@ void generate_random_obstacles() {
   counter = 0;
 }
 
+static void move_start_screen_car() {
+
+  if (start_screen_car.direction == RIGHT) {
+    if (start_screen_car.x <
+        (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
+      start_screen_car.x = start_screen_car.x + 1;
+    } else {
+      start_screen_car.direction = LEFT;
+    }
+  } else {
+    if (start_screen_car.x > BORDER_WIDTH) {
+      start_screen_car.x = start_screen_car.x - 1;
+    } else {
+      start_screen_car.direction = RIGHT;
+    }
+  }
+}
+
 void draw_start_screen() {
+  drawRect(0, 0, LED_MATRIX_WIDTH, LED_MATRIX_HEIGHT, WHITE);
   drawBitmap(1, 48, letter_R, 6, 10, RED);
   drawBitmap(9, 48, letter_O, 6, 10, RED);
   drawBitmap(17, 48, letter_A, 6, 10, RED);
@@ -361,6 +391,8 @@ void draw_start_screen() {
   drawBitmap(20, 13, letter_smallY, 5, 5, BLUE);
 
   drawBitmap(26, 13, play_button, 4, 5, GREEN);
+  object__draw(start_screen_car);
+  move_start_screen_car();
 }
 
 static bool check_collision(const bitmap_object obstacle) {

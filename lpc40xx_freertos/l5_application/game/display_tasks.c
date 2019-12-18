@@ -25,7 +25,6 @@ static void draw_game_screen() {
 
 void display_task(void *params) {
   bool change_state = false;
-  object__init_player_car();
 
   game_screen_state = START_SCREEN;
 
@@ -38,6 +37,8 @@ void display_task(void *params) {
     case START_SCREEN:
       xSemaphoreGive(no_sound);
       draw_start_screen();
+      // object__init_player_car();
+      game_init();
       if (change_state) {
         led_matrix__turnOffAllPixels();
         game_screen_state = COUNTDOWN_SCREEN;
@@ -78,6 +79,7 @@ void display_task(void *params) {
       if (change_state) {
         game_screen_state = START_SCREEN;
         change_state = false;
+        led_matrix__turnOffAllPixels();
       }
       break;
     }
