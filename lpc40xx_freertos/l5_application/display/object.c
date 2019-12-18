@@ -55,6 +55,9 @@ const uint8_t score_letter_O[] = {0xE0, 0xA0, 0xA0, 0xA0, 0xE0};
 const uint8_t score_letter_R[] = {0xA0, 0xC0, 0xE0, 0xA0, 0xE0};
 const uint8_t score_letter_E[] = {0xE0, 0x80, 0xC0, 0x80, 0xE0};
 
+const uint8_t level_letter_L[] = {0xE0, 0x80, 0x80, 0x80, 0x80};
+const uint8_t level_letter_V[] = {0xA0, 0xA0, 0xA0, 0xA0, 0x40};
+
 const uint8_t score_colon[] = {0x00, 0x80, 0x00, 0x80, 0x00};
 
 const uint8_t number[][5] = {
@@ -162,6 +165,16 @@ void draw_score() {
   drawBitmap(29, 59, number[unit], 3, 5, CYAN);
 }
 
+void draw_level() {
+  drawBitmap(1, 53, level_letter_L, 3, 5, GREEN);
+  drawBitmap(5, 53, score_letter_E, 3, 5, GREEN);
+  drawBitmap(9, 53, level_letter_V, 3, 5, GREEN);
+  drawBitmap(13, 53, score_letter_E, 3, 5, GREEN);
+  drawBitmap(17, 53, level_letter_L, 3, 5, GREEN);
+
+  drawBitmap(21, 53, number[current_level], 3, 5, GREEN);
+}
+
 void object__init_player_car(void) {
   player_car.x = 25;
   player_car.y = 10;
@@ -237,12 +250,18 @@ static void draw_obstacles() {
 }
 
 void move_car_left() {
+  if (game_screen_state != GAME_SCREEN) {
+    return;
+  }
   if (player_car.x > BORDER_WIDTH - 1) {
     player_car.x -= 1;
   }
 }
 
 void move_car_right() {
+  if (game_screen_state != GAME_SCREEN) {
+    return;
+  }
   if (player_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH - 1)) {
     player_car.x += 1;
   }
@@ -257,11 +276,13 @@ void draw_countdown_screen() {
     drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2,
                BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
     draw_score();
+    draw_level();
     vTaskDelay(500);
 
     led_matrix__turnOffAllPixels();
     draw_borders();
     draw_score();
+    draw_level();
     vTaskDelay(500);
     i--;
   }
@@ -275,6 +296,7 @@ void draw() {
   draw_borders();
   draw_obstacles();
   draw_score();
+  draw_level();
 }
 
 static void generate_obstacle(bitmap_object *obstacle) {
