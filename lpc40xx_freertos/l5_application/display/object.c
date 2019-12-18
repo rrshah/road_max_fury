@@ -56,7 +56,7 @@ const uint8_t score_letter_R[] = {0xA0, 0xC0, 0xE0, 0xA0, 0xE0};
 const uint8_t score_letter_E[] = {0xE0, 0x80, 0xC0, 0x80, 0xE0};
 
 const uint8_t level_letter_L[] = {0xE0, 0x80, 0x80, 0x80, 0x80};
-const uint8_t level_letter_V[] = {0xA0, 0xA0, 0xA0, 0xA0, 0x40};
+const uint8_t level_letter_V[] = {0x40, 0xA0, 0xA0, 0xA0, 0xA0};
 
 const uint8_t score_colon[] = {0x00, 0x80, 0x00, 0x80, 0x00};
 
@@ -176,7 +176,7 @@ void draw_level() {
 }
 
 void object__init_player_car(void) {
-  player_car.x = 25;
+  player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
   player_car.y = 10;
   player_car.height = CAR_HEIGHT_WITH_PADDING;
   player_car.width = CAR_WIDTH_WITH_PADDING;
@@ -271,7 +271,7 @@ void draw_countdown_screen() {
   uint8_t i = 3;
   while (i > 0) {
     xSemaphoreGive(countdown);
-    object__draw(countdown_car);
+    draw_player_car();
     draw_borders();
     drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2,
                BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
@@ -288,7 +288,6 @@ void draw_countdown_screen() {
   }
   xSemaphoreGive(play);
   vTaskDelay(500);
-  player_car.x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2);
 }
 
 void draw() {
@@ -322,7 +321,7 @@ static void generate_obstacle(bitmap_object *obstacle) {
   obstacle->width = obstacle_types[index].width;
   obstacle->speed = obstacle_types[index].speed;
   obstacle->counter = 0;
-  obstacle->direction = RIGHT;
+  obstacle->direction = index % 2;
 }
 
 void generate_random_obstacles() {
