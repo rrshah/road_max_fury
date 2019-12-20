@@ -28,7 +28,7 @@ static gpio_s led0, led1;
 static void uart3_init(void) {
 
   // Enable peripheral
-  uart__init(UART__3, clock__get_peripheral_clock_hz(), 9600);
+  uart__init(UART__3, clock__get_peripheral_clock_hz(), 115200);
 
   // Memory for the queue data structure
   static StaticQueue_t rxq_struct;
@@ -45,17 +45,10 @@ static void uart3_init(void) {
   uart__enable_queues(UART__3, txq_handle, rxq_handle);
 
   // Enable TX3, RX3 Pins
-  gpio__construct_with_function(0, 1, GPIO__FUNCTION_2);
-  gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
-  // FOR DEBUG
-  // TX3
-  gpio__construct_with_function(0, 25, GPIO__FUNCTION_3);
-  //   // RX3
-  //   gpio__construct_with_function(0, 26, GPIO__FUNCTION_3);
-
-  //   // To give another 3.3V to wifi pin
-  //   gpio_s Dummy_3V = gpio__construct_as_output(GPIO__PORT_1, 0);
-  //   gpio__set(Dummy_3V);
+  // gpio__construct_with_function(0, 1, GPIO__FUNCTION_2);
+  // gpio__construct_with_function(0, 0, GPIO__FUNCTION_2);
+  gpio__construct_with_function(4, 28, GPIO__FUNCTION_2);
+  gpio__construct_with_function(4, 29, GPIO__FUNCTION_2);
 }
 
 int main(void) {
@@ -67,9 +60,9 @@ int main(void) {
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
 
-  xTaskCreate(uart3_loopback_test, "loopback_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
+  // xTaskCreate(uart3_loopback_test, "loopback_test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
   // xTaskCreate(uart3_Rx_test, "uart3_Rx_test", 2048 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
-  // xTaskCreate(wifi_test, "wifi test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
+  xTaskCreate(wifi_test, "wifi test", 4096 / sizeof(void *), NULL, PRIORITY_HIGH, NULL);
 
   // It is advised to either run the uart_task, or the SJ2 command-line (CLI), but not both
   // Change '#if 0' to '#if 1' and vice versa to try it out
