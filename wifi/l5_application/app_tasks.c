@@ -43,8 +43,8 @@ void uart3_Rx_test(void *pvParameters) {
 
 void wifi_test(void *pvParameters) {
   // char AT_String[] = "LOOP\r\n";
-  // char AT_String[] = "AT\r\n";
-  char AT_String[] = "AT+CWMODE=3\r\n";
+  char AT_String[] = "AT\r\n";
+  // char AT_String[] = "AT+CWMODE=3\r\n";
   // char AT_String[] = "AT+GMR\r\n";
   uint8_t len = strlen(AT_String);
   char input_byte = '\0';
@@ -64,8 +64,8 @@ void wifi_test(void *pvParameters) {
     vTaskDelay(100);
 
     // Should receive "OK"
-    while (uart__get(UART__3, &input_byte, 100)) {
-      uart__put(UART__0, input_byte, 100);
+    while (uart__get(UART__3, &input_byte, 1000)) {
+      uart__put(UART__0, input_byte, 1000);
     }
     vTaskDelay(500);
     // printf("Wifi run\n");
