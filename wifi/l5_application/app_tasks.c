@@ -49,7 +49,7 @@ void wifi_test(void *pvParameters) {
   uint8_t len = strlen(AT_String);
   char input_byte = '\0';
 
-  char DisableEchoCommand[] = "ATE1\r\n";
+  char DisableEchoCommand[] = "ATE0\r\n";
   uint8_t len_echo = strlen(DisableEchoCommand);
   for (uint8_t i = 0; i < len_echo; i++) {
     uart__put(UART__3, DisableEchoCommand[i], 100);
@@ -59,11 +59,11 @@ void wifi_test(void *pvParameters) {
   while (1) {
     for (uint8_t i = 0; i < len; i++) {
       uart__put(UART__3, AT_String[i], 100);
-      vTaskDelay(1);
+      // vTaskDelay(1);
     }
     vTaskDelay(100);
 
-    // Should receive "OK"
+    // Should receive "\r\nOK"
     while (uart__get(UART__3, &input_byte, 1000)) {
       uart__put(UART__0, input_byte, 1000);
     }

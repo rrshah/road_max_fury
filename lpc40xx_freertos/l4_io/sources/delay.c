@@ -18,8 +18,7 @@ void delay__us(uint64_t us) {
 
   // Use the RTOS for the larger delay period in milliseconds since this will
   // sleep the CPU
-  const bool rtos_is_running =
-      (taskSCHEDULER_RUNNING == xTaskGetSchedulerState());
+  const bool rtos_is_running = (taskSCHEDULER_RUNNING == xTaskGetSchedulerState());
 
   // TODO: This assumes 1Khz OS tick rate
   if (rtos_is_running && us > 1000) {

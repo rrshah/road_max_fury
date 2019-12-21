@@ -3,12 +3,14 @@
 #include <string.h>
 
 #include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+
 #include "display_tasks.h"
+#include "draw.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "object.h"
-#include "queue.h"
-#include "semphr.h"
 
 extern uint8_t game_screen_state;
 extern SemaphoreHandle_t crash;

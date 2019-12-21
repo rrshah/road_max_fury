@@ -41,7 +41,6 @@ static void init_button(void) {
 static void setup_button_isr(void) {
   button_pressed_signal = xSemaphoreCreateBinary();
   change_game_state = xSemaphoreCreateBinary();
-  lpc_peripheral__enable_interrupt(LPC_PERIPHERAL__GPIO,
-                                   gpio__interrupt_dispatcher);
+  lpc_peripheral__enable_interrupt(LPC_PERIPHERAL__GPIO, gpio__interrupt_dispatcher);
   gpio0__attach_interrupt(9, GPIO_INTR__FALLING_EDGE, button_isr);
 }

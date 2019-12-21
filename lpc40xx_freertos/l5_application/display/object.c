@@ -3,10 +3,12 @@
 #include <stdlib.h>
 
 #include "FreeRTOS.h"
-#include "graphics.h"
-#include "object.h"
 #include "semphr.h"
 #include "task.h"
+
+#include "draw.h"
+#include "graphics.h"
+#include "object.h"
 
 #define BORDER_HEIGHT (52)
 #define BORDER_WIDTH (2)
@@ -25,24 +27,15 @@ extern SemaphoreHandle_t level;
 
 const uint8_t car[] = {0x30, 0x78, 0x30, 0x78, 0x30, 0};
 
-const uint8_t letter_R[] = {0x84, 0x88, 0x90, 0xA0, 0xC0,
-                            0xFC, 0x84, 0x84, 0x84, 0xFC};
-const uint8_t letter_O[] = {0x78, 0x84, 0x84, 0x84, 0x84,
-                            0x84, 0x84, 0x84, 0x84, 0x78};
-const uint8_t letter_A[] = {0x84, 0x84, 0x84, 0x84, 0x84,
-                            0xFC, 0x84, 0x84, 0x84, 0x78};
-const uint8_t letter_D[] = {0xF0, 0x88, 0x84, 0x84, 0x84,
-                            0x84, 0x84, 0x84, 0x88, 0xF0};
-const uint8_t letter_M[] = {0x84, 0x84, 0x84, 0x84, 0x84,
-                            0xB4, 0xB4, 0xB4, 0xCC, 0x84};
-const uint8_t letter_X[] = {0x84, 0x84, 0x84, 0x48, 0x30,
-                            0x30, 0x48, 0x84, 0x84, 0x84};
-const uint8_t letter_F[] = {0x80, 0x80, 0x80, 0x80, 0x80,
-                            0xFC, 0x80, 0x80, 0x80, 0xFC};
-const uint8_t letter_U[] = {0x78, 0x84, 0x84, 0x84, 0x84,
-                            0x84, 0x84, 0x84, 0x84, 0x84};
-const uint8_t letter_Y[] = {0x30, 0x30, 0x30, 0x30, 0x30,
-                            0x30, 0x48, 0x84, 0x84, 0x84};
+const uint8_t letter_R[] = {0x84, 0x88, 0x90, 0xA0, 0xC0, 0xFC, 0x84, 0x84, 0x84, 0xFC};
+const uint8_t letter_O[] = {0x78, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x78};
+const uint8_t letter_A[] = {0x84, 0x84, 0x84, 0x84, 0x84, 0xFC, 0x84, 0x84, 0x84, 0x78};
+const uint8_t letter_D[] = {0xF0, 0x88, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x88, 0xF0};
+const uint8_t letter_M[] = {0x84, 0x84, 0x84, 0x84, 0x84, 0xB4, 0xB4, 0xB4, 0xCC, 0x84};
+const uint8_t letter_X[] = {0x84, 0x84, 0x84, 0x48, 0x30, 0x30, 0x48, 0x84, 0x84, 0x84};
+const uint8_t letter_F[] = {0x80, 0x80, 0x80, 0x80, 0x80, 0xFC, 0x80, 0x80, 0x80, 0xFC};
+const uint8_t letter_U[] = {0x78, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84, 0x84};
+const uint8_t letter_Y[] = {0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x48, 0x84, 0x84, 0x84};
 
 const uint8_t letter_smallP[] = {0x80, 0x80, 0xF8, 0x88, 0xF8};
 const uint8_t letter_smallL[] = {0xF8, 0x80, 0x80, 0x80, 0x80};
@@ -60,12 +53,11 @@ const uint8_t level_letter_V[] = {0x40, 0xA0, 0xA0, 0xA0, 0xA0};
 
 const uint8_t score_colon[] = {0x00, 0x80, 0x00, 0x80, 0x00};
 
-const uint8_t number[][5] = {
-    {0xE0, 0xA0, 0xA0, 0xA0, 0xE0}, {0xE0, 0x40, 0x40, 0xC0, 0x40},
-    {0xE0, 0x80, 0xE0, 0x20, 0xE0}, {0xE0, 0x20, 0x60, 0x20, 0xE0},
-    {0x40, 0xE0, 0xC0, 0x80, 0x80}, {0xE0, 0x20, 0xE0, 0x80, 0xE0},
-    {0xE0, 0Xa0, 0xE0, 0x80, 0XE0}, {0x20, 0x20, 0x20, 0x20, 0xE0},
-    {0xE0, 0xA0, 0xE0, 0xA0, 0xE0}, {0xE0, 0x20, 0xE0, 0xA0, 0xE0}};
+const uint8_t number[][5] = {{0xE0, 0xA0, 0xA0, 0xA0, 0xE0}, {0xE0, 0x40, 0x40, 0xC0, 0x40},
+                             {0xE0, 0x80, 0xE0, 0x20, 0xE0}, {0xE0, 0x20, 0x60, 0x20, 0xE0},
+                             {0x40, 0xE0, 0xC0, 0x80, 0x80}, {0xE0, 0x20, 0xE0, 0x80, 0xE0},
+                             {0xE0, 0Xa0, 0xE0, 0x80, 0XE0}, {0x20, 0x20, 0x20, 0x20, 0xE0},
+                             {0xE0, 0xA0, 0xE0, 0xA0, 0xE0}, {0xE0, 0x20, 0xE0, 0xA0, 0xE0}};
 
 const uint8_t play_button[] = {0xC0, 0xE0, 0xF1, 0xE0, 0xC0};
 
@@ -76,8 +68,7 @@ static uint8_t current_level = 1;
 static uint8_t num_of_on_screen_obstacles = 0;
 static bitmap_object player_car;
 static bitmap_object start_screen_car = {.color = CYAN,
-                                         .x = (LED_MATRIX_WIDTH / 2) -
-                                              (CAR_WIDTH_WITH_PADDING / 2),
+                                         .x = (LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2),
                                          .y = 5,
                                          .image = car,
                                          .height = CAR_HEIGHT_WITH_PADDING,
@@ -157,8 +148,7 @@ void game_init() {
 }
 
 void object__draw(bitmap_object object) {
-  drawBitmap(object.x, object.y, object.image, object.width, object.height,
-             object.color);
+  drawBitmap(object.x, object.y, object.image, object.width, object.height, object.color);
 }
 
 static void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
@@ -208,8 +198,7 @@ static void move_obstacles(bitmap_object *obstacle) {
   case DOWN_AND_LEFT_RIGHT:
     obstacle->y = obstacle->y - 1;
     if (obstacle->direction == RIGHT) {
-      if (obstacle->x <
-          (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
+      if (obstacle->x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
         obstacle->x = obstacle->x + 1;
       } else {
         obstacle->direction = LEFT;
@@ -284,8 +273,7 @@ void draw_countdown_screen() {
     xSemaphoreGive(countdown);
     draw_player_car();
     draw_borders();
-    drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2,
-               BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
+    drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2, BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
     draw_score();
     draw_level();
     vTaskDelay(500);
@@ -357,8 +345,7 @@ void generate_random_obstacles() {
 static void move_start_screen_car() {
 
   if (start_screen_car.direction == RIGHT) {
-    if (start_screen_car.x <
-        (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
+    if (start_screen_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
       start_screen_car.x = start_screen_car.x + 1;
     } else {
       start_screen_car.direction = LEFT;
@@ -398,8 +385,7 @@ void draw_start_screen() {
 
 static bool check_collision(const bitmap_object obstacle) {
   bool check_y = false;
-  if (((obstacle.x + 1) >= player_car.x + 1) &&
-      ((obstacle.x + 1) <= (player_car.x + CAR_WIDTH))) {
+  if (((obstacle.x + 1) >= player_car.x + 1) && ((obstacle.x + 1) <= (player_car.x + CAR_WIDTH))) {
     check_y = true;
   } else if (((obstacle.x + CAR_WIDTH) >= (player_car.x + 1)) &&
              ((obstacle.x + CAR_WIDTH) <= (player_car.x + CAR_WIDTH))) {
@@ -410,8 +396,7 @@ static bool check_collision(const bitmap_object obstacle) {
     return false;
   }
 
-  if (((obstacle.y >= player_car.y) &&
-       (obstacle.y <= (player_car.y + CAR_HEIGHT - 1))) ||
+  if (((obstacle.y >= player_car.y) && (obstacle.y <= (player_car.y + CAR_HEIGHT - 1))) ||
       (((obstacle.y + CAR_HEIGHT - 1) >= player_car.y) &&
        ((obstacle.y + CAR_HEIGHT - 1) <= (player_car.y + CAR_HEIGHT - 1)))) {
     return true;
@@ -451,8 +436,7 @@ const uint8_t game_over_O[] = {0x70, 0x88, 0x88, 0x88, 0x70};
 const uint8_t game_over_V[] = {0x20, 0x50, 0x88, 0x88, 0x88};
 const uint8_t game_over_R[] = {0x98, 0xA0, 0xF8, 0x88, 0xF8};
 
-static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81,
-                                 0xa5, 0x81, 0x42, 0x3c};
+static const uint8_t smiley[] = {0x3c, 0x42, 0x99, 0xa5, 0x81, 0xa5, 0x81, 0x42, 0x3c};
 
 void draw_gameover_screen() {
   uint8_t hundred, ten, unit;
