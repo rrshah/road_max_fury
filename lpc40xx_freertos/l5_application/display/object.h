@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define BORDER_HEIGHT (52)
+#define BORDER_WIDTH (2)
+
 enum move { DOWN = 0, DOWN_AND_LEFT_RIGHT = 1 };
 enum direction { RIGHT = 0, LEFT = 1 };
 enum screen_state {
@@ -44,3 +47,4 @@ void draw_crash_screen();
 void draw_countdown_screen();
 void draw_gameover_screen();
 void game_init();
+void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit);
