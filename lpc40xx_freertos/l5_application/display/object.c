@@ -31,6 +31,8 @@ const uint8_t number[][5] = {{0xE0, 0xA0, 0xA0, 0xA0, 0xE0}, {0xE0, 0x40, 0x40, 
                              {0xE0, 0Xa0, 0xE0, 0x80, 0XE0}, {0x20, 0x20, 0x20, 0x20, 0xE0},
                              {0xE0, 0xA0, 0xE0, 0xA0, 0xE0}, {0xE0, 0x20, 0xE0, 0xA0, 0xE0}};
 
+static void move_obstacles(bitmap_object *obstacle);
+
 static uint16_t score = 0;
 uint8_t game_screen_state = START_SCREEN;
 
@@ -130,6 +132,103 @@ void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit) {
   *hundred = temp_score % 10;
 }
 
+static void draw_player_car() { object__draw(player_car); }
+
+static void draw_obstacles() {
+  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+    if (car_obstacle[i].isAlive) {
+      object__draw(car_obstacle[i]);
+    }
+  }
+}
+
+/*****************************************************************************
+ *                 MOVE FUNCTIONS -> BEGIN
+ *
+ *****************************************************************************/
+void move() {
+  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
+    if (car_obstacle[i].isAlive) {
+      move_obstacles(&car_obstacle[i]);
+    }
+  }
+}
+
+void move_car_left() {
+  if (game_screen_state != GAME_SCREEN) {
+    return;
+  }
+  if (player_car.x > BORDER_WIDTH - 1) {
+    player_car.x -= 1;
+  }
+}
+
+void move_car_right() {
+  if (game_screen_state != GAME_SCREEN) {
+    return;
+  }
+  if (player_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH - 1)) {
+    player_car.x += 1;
+  }
+}
+
+void move_start_screen_car() {
+
+  if (start_screen_car.direction == RIGHT) {
+    if (start_screen_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
+      start_screen_car.x = start_screen_car.x + 1;
+    } else {
+      start_screen_car.direction = LEFT;
+    }
+  } else {
+    if (start_screen_car.x > BORDER_WIDTH) {
+      start_screen_car.x = start_screen_car.x - 1;
+    } else {
+      start_screen_car.direction = RIGHT;
+    }
+  }
+}
+
+/*****************************************************************************
+ *                 MOVE FUNCTIONS -> END
+ *
+ *****************************************************************************/
+
+void draw_countdown_screen() {
+  uint8_t i = 3;
+  while (i > 0) {
+    xSemaphoreGive(countdown);
+    draw_player_car();
+    draw_borders();
+    drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2, BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
+    draw_score();
+    draw_level();
+    vTaskDelay(500);
+
+    led_matrix__turnOffAllPixels();
+    draw_borders();
+    draw_score();
+    draw_level();
+    vTaskDelay(500);
+    i--;
+  }
+  xSemaphoreGive(play);
+  vTaskDelay(500);
+}
+
+void draw() {
+  draw_player_car();
+  draw_borders();
+  draw_obstacles();
+  draw_score();
+  draw_level();
+}
+
+/*****************************************************************************
+ *                 OBSTACLES -> BEGIN
+ *
+ *****************************************************************************/
+
 static void move_obstacles(bitmap_object *obstacle) {
   obstacle->counter++;
   if (obstacle->counter < obstacle->speed) {
@@ -169,73 +268,6 @@ static void move_obstacles(bitmap_object *obstacle) {
     }
     num_of_on_screen_obstacles--;
   }
-}
-
-void move() {
-  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
-    if (car_obstacle[i].isAlive) {
-      move_obstacles(&car_obstacle[i]);
-    }
-  }
-}
-
-static void draw_player_car() { object__draw(player_car); }
-
-static void draw_obstacles() {
-  for (uint8_t i = 0; i < NUM_OF_OBSTACLES; i++) {
-    if (car_obstacle[i].isAlive) {
-      object__draw(car_obstacle[i]);
-    }
-  }
-}
-
-void move_car_left() {
-  if (game_screen_state != GAME_SCREEN) {
-    return;
-  }
-  if (player_car.x > BORDER_WIDTH - 1) {
-    player_car.x -= 1;
-  }
-}
-
-void move_car_right() {
-  if (game_screen_state != GAME_SCREEN) {
-    return;
-  }
-  if (player_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH - 1)) {
-    player_car.x += 1;
-  }
-}
-
-void draw_countdown_screen() {
-  uint8_t i = 3;
-  while (i > 0) {
-    xSemaphoreGive(countdown);
-    draw_player_car();
-    draw_borders();
-    drawBitmap((LED_MATRIX_WIDTH / 2) - (CAR_WIDTH_WITH_PADDING / 2) + 2, BORDER_HEIGHT - 15, number[i], 3, 5, GREEN);
-    draw_score();
-    draw_level();
-    vTaskDelay(500);
-
-    led_matrix__turnOffAllPixels();
-    draw_borders();
-    draw_score();
-    draw_level();
-    vTaskDelay(500);
-    i--;
-  }
-  xSemaphoreGive(play);
-  vTaskDelay(500);
-}
-
-void draw() {
-  draw_player_car();
-  draw_borders();
-  draw_obstacles();
-  draw_score();
-  draw_level();
-  // draw_and_move_borders();
 }
 
 static void generate_obstacle(bitmap_object *obstacle) {
@@ -282,46 +314,15 @@ void generate_random_obstacles() {
   counter = 0;
 }
 
-void move_start_screen_car() {
+/*****************************************************************************
+ *                 OBSTACLES -> END
+ *
+ *****************************************************************************/
 
-  if (start_screen_car.direction == RIGHT) {
-    if (start_screen_car.x < (LED_MATRIX_WIDTH - BORDER_WIDTH - CAR_WIDTH_WITH_PADDING)) {
-      start_screen_car.x = start_screen_car.x + 1;
-    } else {
-      start_screen_car.direction = LEFT;
-    }
-  } else {
-    if (start_screen_car.x > BORDER_WIDTH) {
-      start_screen_car.x = start_screen_car.x - 1;
-    } else {
-      start_screen_car.direction = RIGHT;
-    }
-  }
-}
-
-// void draw_start_screen() {
-//   drawRect(0, 0, LED_MATRIX_WIDTH, LED_MATRIX_HEIGHT, WHITE);
-//   drawBitmap(1, 48, letter_R, 6, 10, RED);
-//   drawBitmap(9, 48, letter_O, 6, 10, RED);
-//   drawBitmap(17, 48, letter_A, 6, 10, RED);
-//   drawBitmap(25, 48, letter_D, 6, 10, RED);
-//   drawBitmap(5, 35, letter_M, 6, 10, RED);
-//   drawBitmap(13, 35, letter_A, 6, 10, RED);
-//   drawBitmap(21, 35, letter_X, 6, 10, RED);
-//   drawBitmap(1, 22, letter_F, 6, 10, RED);
-//   drawBitmap(9, 22, letter_U, 6, 10, RED);
-//   drawBitmap(17, 22, letter_R, 6, 10, RED);
-//   drawBitmap(25, 22, letter_Y, 6, 10, RED);
-
-//   drawBitmap(2, 13, letter_smallP, 5, 5, BLUE);
-//   drawBitmap(8, 13, letter_smallL, 5, 5, BLUE);
-//   drawBitmap(14, 13, letter_smallA, 5, 5, BLUE);
-//   drawBitmap(20, 13, letter_smallY, 5, 5, BLUE);
-
-//   drawBitmap(26, 13, play_button, 4, 5, GREEN);
-//   object__draw(start_screen_car);
-//   move_start_screen_car();
-// }
+/*****************************************************************************
+ *                 COLLISION DETECTION -> BEGIN
+ *
+ *****************************************************************************/
 
 static bool check_collision(const bitmap_object obstacle) {
   bool check_y = false;
@@ -353,3 +354,8 @@ void collision_detector() {
     }
   }
 }
+
+/*****************************************************************************
+ *                 COLLISION DETECTION ENDS
+ *
+ *****************************************************************************/
