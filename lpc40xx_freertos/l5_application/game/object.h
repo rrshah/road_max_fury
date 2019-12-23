@@ -42,7 +42,6 @@ void draw();
 void move();
 void generate_random_obstacles();
 void collision_detector();
-void draw_crash_screen();
 void draw_countdown_screen();
 void game_init();
 void get_score(uint8_t *hundred, uint8_t *ten, uint8_t *unit);

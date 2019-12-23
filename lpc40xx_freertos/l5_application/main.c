@@ -21,7 +21,7 @@ python nxp-programmer/flash.py
 #include "uart.h"
 
 #include "button_task.h"
-#include "display_tasks.h"
+#include "game_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "mp3_decoder_tasks.h"
@@ -44,7 +44,7 @@ int main(void) {
   xTaskCreate(blink_task, "led0", configMINIMAL_STACK_SIZE, (void *)&led0, PRIORITY_LOW, NULL);
   xTaskCreate(blink_task, "led1", configMINIMAL_STACK_SIZE, (void *)&led1, PRIORITY_LOW, NULL);
   xTaskCreate(accelerometer_task, "acc_task", (1024 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
-  xTaskCreate(display_task, "display_task", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(game_task, "game_task", (2048 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
   xTaskCreate(button_task, "button_task", (1024 / sizeof(void *)), NULL, PRIORITY_HIGH, NULL);
   xTaskCreate(mp3_player_task, "mp3_player_task", (1024 / sizeof(void *)), NULL, PRIORITY_LOW, NULL);
 

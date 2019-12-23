@@ -6,8 +6,8 @@
 #include "queue.h"
 #include "semphr.h"
 
-#include "display_tasks.h"
 #include "draw.h"
+#include "game_tasks.h"
 #include "graphics.h"
 #include "led_matrix.h"
 #include "object.h"
@@ -25,7 +25,7 @@ static void draw_game_screen() {
   collision_detector();
 }
 
-void display_task(void *params) {
+void game_task(void *params) {
   bool change_state = false;
 
   game_screen_state = START_SCREEN;
