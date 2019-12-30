@@ -1,11 +1,9 @@
 /*
-http://books.socialledge.com/books/embedded-drivers-real-time-operating-systems/page/freertos-producer-consumer-tasks
-
 scons --project=wifi -j4
 
 python nxp-programmer/flash.py --port COM5 --input _build_wifi\wifi.bin
-
 */
+
 #include <stdio.h>
 #include <string.h>
 
