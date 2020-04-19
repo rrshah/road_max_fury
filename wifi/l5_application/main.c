@@ -33,7 +33,7 @@ static void uart3_init(void) {
   static StaticQueue_t txq_struct;
 
   // Memory where the queue actually stores the data
-  static uint8_t rxq_storage[32];
+  static uint8_t rxq_storage[128];
   static uint8_t txq_storage[128];
 
   // Make UART more efficient by backing it with RTOS queues (optional but highly recommended with RTOS)
